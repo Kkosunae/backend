@@ -1,22 +1,25 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as qs from 'qs';
 
 @Injectable()
 export class AppService {
+  constructor(private readonly configService: ConfigService) {}
+
   getHello(): string {
     return 'Hello World!';
   }
 
   async kakaoLogin(options: { code: string; domain: string }): Promise<any> {
     const { code, domain } = options;
-    const kakaoKey = 'acccbb6899512c642849dc8d73540b62';
+    const kakaoKey = this.configService.get<string>('kakao.clientID');
     const kakaoTokenUrl = 'https://kauth.kakao.com/oauth/token';
     const kakaoUserInfoUrl = 'https://kapi.kakao.com/v2/user/me';
     const body = {
       grant_type: 'authorization_code',
       client_id: kakaoKey,
-      redirect_uri: `${domain}/kakao-callback`,
+      redirect_uri: domain + this.configService.get<string>('kakao.callback'),
       code,
     };
     const headers = {
