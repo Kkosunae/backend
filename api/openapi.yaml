@@ -1,0 +1,34 @@
+openapi: 3.0.0
+info:
+  title: Kkosunae API
+  description: |
+    Node.js API Server for Kkosunae
+  version: 1.0.0
+  contact:
+    name: Kkosunae
+    url: https://www.notion.so/Kkosunae-6721af7dab564435b1396f4d96143592
+    email: thdnjs3596@gmail.com
+servers:
+  - url: http://localhost:8080
+    description: Local server
+  - url: https://kkosunae.herokuapp.com
+    description: Heroku server
+
+paths:
+  /health_check:
+    get:
+        tags: 
+            - health_check
+        summary: health_check
+        description: health_check
+        responses:
+            '200':
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    example: OK
