@@ -20,11 +20,15 @@
   },
   "homepage": "https://github.com/Kkosunae/backend#readme",
   "dependencies": {
+    "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "config": "^3.3.9",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.1",
+    "mysql2": "^3.5.1",
     "passport": "^0.6.0",
+    "sequelize": "^6.32.1",
     "swagger-ui-express": "^5.0.0",
     "yamljs": "^0.3.0"
   },
