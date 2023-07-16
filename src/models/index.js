@@ -1,7 +1,6 @@
 'use strict';
 
-const models = {
-    User: import('./user.js'),
-};
+import User from './user.js';
 
-export default models;
+
+export {User};

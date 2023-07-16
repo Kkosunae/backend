@@ -1,54 +1,52 @@
 'use strict';
 
-import config from 'config';
-import Sequelize from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
+import {sequelize} from '../../loaders/sequelize.js';
 
-class User extends Sequelize.Model {
-    static init(sequelize) {
-        return super.init(
-            {
-                id: {
-                    type: Sequelize.INTEGER,
-                    autoIncrement: true,
-                    allowNull: false,
-                    unique: true,
-                    primaryKey: true,
-                },
-                profile: {
-                    type: Sequelize.STRING(100),
-                    allowNull: true,
-                    defaultValue: config.get('s3.basic_image')
-                },
-                user_name: {
-                    type: Sequelize.STRING(30),
-                    unique: true,
-                    allowNull: false,
-                },
-                email: {
-                    type: Sequelize.STRING(30),
-                    unique: true,
-                    allowNull: false,
-                },
-                password: {
-                    type: Sequelize.STRING(100),
-                    allowNull: false,
-                },
-            },
-            {
-                sequelize,
-                timestamps: true,
-                createdAt: 'created_at',
-                updatedAt: 'updated_at',
-                modelName: 'User',
-                tableName: 'user_info',
-                charset: 'utf8',
-                collate: 'utf8_general_ci',
-            },
-        );
-    }
+class User extends Model {}
 
-    static associate(db) {
-    }
-};
+User.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      auth_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      auth_type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      birthday: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      gender: {
+        type: DataTypes.ENUM('male', 'female', 'other'),
+        allowNull: true,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'User',
+      tableName: 'user',
+    },
+);
 
 export default User;
