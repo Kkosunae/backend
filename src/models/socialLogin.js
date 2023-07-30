@@ -2,25 +2,35 @@
 
 import {DataTypes, Model} from 'sequelize';
 import {sequelize} from '../../loaders/sequelize.js';
-import SocialLogin from './socialLogin.js';
-import Follow from './follow.js';
-import FollowHistory from './followHistory.js';
+import User from './user.js';
 
-class User extends Model {}
+class SocialLogin extends Model {}
 
-User.init(
+SocialLogin.init(
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
+      auth_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      auth_type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      email: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -35,20 +45,16 @@ User.init(
     },
     {
       sequelize,
-      modelName: 'User',
-      tableName: 'user',
+      modelName: 'SocialLogin',
+      tableName: 'social_login',
     },
 );
 
-User.hasMany(SocialLogin, {
-  foreignKey: 'user_id',
-  as: 'SocialLogin',
-});
+
 // // 사용자와 팔로우 기록간의 관계 설정
-// User.hasMany(FollowHistory, {
+// SocialLogin.belongsTo(User, {
 //   foreignKey: 'user_id',
-//   as: 'followHistory',
+//   as: 'user',
 // });
 
-
-export default User;
+export default SocialLogin;
