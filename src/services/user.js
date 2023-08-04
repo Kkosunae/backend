@@ -1,9 +1,10 @@
-import {User, SocialLogin, Follow, FollowHistory} from '../models/index.js';
+import { models } from '../models/index.js';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import {Op} from 'sequelize';
 
+const { User, SocialLogin, Follow, FollowHistory } = models;
 export const isMember = async (authId) => {
   try {
     // id가 authId이고 user_id가 null이 아닌 경우
@@ -126,37 +127,48 @@ export const signInGoogle = async (googleToken) => {
 };
 
 export const followService = {
-  follow: async (userId, targetUserId) => {
+  // 존재하는 팔로우인지 확인
+  isExistingFollow: async (follower_id, following_id) => {
     try {
-      await Follow.create({
-        user_id: userId,
-        target_user_id: targetUserId,
+      const follow = await Follow.findOne({ where: { follower_id, following_id } });
+    } catch (error) {
+      throw new Error('Failed to check if the user is already following.');
+    }
+    if (follow) {
+      return follow.id;
+    }
+  },
+  follow: async (followerId, followingId) => {
+    try {
+      const follow = await Follow.create({
+        follower_id: followerId,
+        following_id: followingId,
       });
-      // 팔로우 기록 생성
       await FollowHistory.create({
-        user_id: userId,
-        target_user_id: targetUserId,
+        follow_id: follow.id,
+        follower_id: followerId,
+        following_id: followingId,
         action: 'follow',
       });
 
-      // 여기서 추가로 팔로우 한 사용자의 추가적인 로직을 처리할 수 있습니다.
       // 예: 사용자의 팔로워 수, 팔로잉 수 업데이트 등
     } catch (error) {
       throw new Error('Failed to follow the user.');
     }
   },
 
-  unfollow: async (userId, targetUserId) => {
+  unfollow: async (followerId, followingId) => {
     try {
-      // 언팔로우 기록 생성
+      const follow = await Follow.findOne({ where: { follower_id, following_id } });
+
+      await Follow.destroy({ where: { follower_id, following_id } });
       await FollowHistory.create({
-        user_id: userId,
-        target_user_id: targetUserId,
+        follow_id: follow.id,
+        follower_id: followerId,
+        following_id: followingId,
         action: 'unfollow',
       });
 
-      // 여기서 추가로 언팔로우 한 사용자의 추가적인 로직을 처리할 수 있습니다.
-      // 예: 사용자의 팔로워 수, 팔로잉 수 업데이트 등
     } catch (error) {
       throw new Error('Failed to unfollow the user.');
     }

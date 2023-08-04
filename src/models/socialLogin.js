@@ -2,6 +2,7 @@
 
 import {DataTypes, Model} from 'sequelize';
 import {sequelize} from '../../loaders/sequelize.js';
+import { models } from './index.js';
 import User from './user.js';
 
 class SocialLogin extends Model {}
@@ -49,12 +50,5 @@ SocialLogin.init(
       tableName: 'social_login',
     },
 );
-
-
-// // 사용자와 팔로우 기록간의 관계 설정
-// SocialLogin.belongsTo(User, {
-//   foreignKey: 'user_id',
-//   as: 'user',
-// });
 
 export default SocialLogin;

@@ -5,6 +5,7 @@ import {sequelize} from '../../loaders/sequelize.js';
 import SocialLogin from './socialLogin.js';
 import Follow from './follow.js';
 import FollowHistory from './followHistory.js';
+import { models } from './index.js';
 
 class User extends Model {}
 
@@ -39,16 +40,5 @@ User.init(
       tableName: 'user',
     },
 );
-
-User.hasMany(SocialLogin, {
-  foreignKey: 'user_id',
-  as: 'SocialLogin',
-});
-// // 사용자와 팔로우 기록간의 관계 설정
-// User.hasMany(FollowHistory, {
-//   foreignKey: 'user_id',
-//   as: 'followHistory',
-// });
-
 
 export default User;

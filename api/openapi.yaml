@@ -169,3 +169,85 @@ paths:
                                 error:
                                     type: string
                                     example: "이미 존재하는 이메일입니다."
+  /user/follow::
+    post:
+        tags:
+            - user
+        summary: 팔로우
+        description: body에 folloingId 받고, header 에 jwt 토큰 받는 API
+        parameters:
+            - in: header
+              name: Authorization
+              description: JWT 토큰 (Bearer 방식)
+              required: true
+              schema:
+                  type: string
+              example: Bearer <your_jwt_token_here>
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            followingId:
+                                type: integer
+                                example: 1
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            followingId:
+                                type: int
+                                example: 1
+        responses:
+            '200':
+                description: 성공
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    example: "팔로우 성공"
+  /user/unfollow::
+    delete:
+        tags:
+            - user
+        summary: 팔로우
+        description: body에 folloingId 받고, header 에 jwt 토큰 받는 API
+        parameters:
+            - in: header
+              name: Authorization
+              description: JWT 토큰 (Bearer 방식)
+              required: true
+              schema:
+                  type: string
+              example: Bearer <your_jwt_token_here>
+
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            followingId:
+                                type: int
+                                example: 1
+        responses:
+            '200':
+                description: 성공
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    example: "팔로우 성공"
+     

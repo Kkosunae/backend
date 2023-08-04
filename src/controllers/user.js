@@ -91,11 +91,14 @@ const join = async (req, res) => {
 
 const followingController = {
   followUser: async (req, res) => {
-    const {userId} = req.params;
-    const {targetUserId} = req.body;
+    const followerId = req.userId;
+    const { followingId } = req.body;
 
     try {
-      await followService.follow(userId, targetUserId);
+      let isExistingFollow = await followService.isExistingFollow(followerId, followingId);
+      if(!isExistingFollow) {
+        await followService.follow(followerId, followingId);
+      }
       res.status(201).json({message: 'Successfully followed the user.'});
     } catch (error) {
       res.status(500).json({error: 'Failed to follow the user.'});
@@ -107,7 +110,10 @@ const followingController = {
     const {targetUserId} = req.body;
 
     try {
-      await followService.unfollow(userId, targetUserId);
+      let isExistingFollow = await followService.isExistingFollow(followerId, followingId);
+      if(isExistingFollow) {
+        await followService.unfollow(userId, targetUserId);
+      }
       res.status(200).json({message: 'Successfully unfollowed the user.'});
     } catch (error) {
       res.status(500).json({error: 'Failed to unfollow the user.'});

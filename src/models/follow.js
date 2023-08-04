@@ -12,18 +12,6 @@ Follow.init(
         primaryKey: true,
         autoIncrement: true,
       },
-      follower_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      following_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-      },
     },
     {
       sequelize,
