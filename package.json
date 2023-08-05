@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app",
+    "dev": "nodemon --debug app",
     "start": "node app.js"
   },
   "repository": {
@@ -32,6 +32,8 @@
     "passport": "^0.6.0",
     "sequelize": "^6.32.1",
     "swagger-ui-express": "^5.0.0",
+    "winston": "^3.10.0",
+    "winston-daily-rotate-file": "^4.7.1",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

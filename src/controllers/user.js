@@ -5,6 +5,7 @@ import express from 'express';
 import {signInKakao, signInGoogle, userJoin, createSocialLogin, followService, isMember, getJwt} from '../services/user.js';
 import config from 'config';
 import axios from 'axios';
+import {success, fail} from '../util/responseStatus.js';
 
 const loginKakao = async (req, res) => {
   // post 로 전달받은 바디에서 토큰 추출
@@ -90,33 +91,89 @@ const join = async (req, res) => {
 };
 
 const followingController = {
-  followUser: async (req, res) => {
-    const followerId = req.userId;
-    const { followingId } = req.body;
-
+  getFollowingList: async (req, res) => {
+    if (!req.params.userId) {
+      return res.status(401).json({error: 'Unauthorized'});
+    }
+    const userId = req.params.userId;
     try {
-      let isExistingFollow = await followService.isExistingFollow(followerId, followingId);
-      if(!isExistingFollow) {
-        await followService.follow(followerId, followingId);
-      }
-      res.status(201).json({message: 'Successfully followed the user.'});
+      const followList = await followService.getFollowingList(userId);
+      return res.status(200).json({
+        message: '팔로우 목록을 성공적으로 가져왔습니다.',
+        followList: followList,
+        followCount: followList.length,
+      });
     } catch (error) {
-      res.status(500).json({error: 'Failed to follow the user.'});
+      return res.status(500).json({error: '팔로우 목록을 가져오는데 실패하였습니다.'});
+    }
+  },
+  getFollowerList: async (req, res) => {
+    if (!req.params.userId) {
+      return res.status(401).json({error: 'Unauthorized'});
+    }
+    const userId = req.params.userId;
+    try {
+      const followList = await followService.getFollowerList(userId);
+      return res.status(200).json({
+        message: '팔로워 목록을 성공적으로 가져왔습니다.',
+        followList: followList,
+        followCount: followList.length,
+      });
+    } catch (error) {
+      return res.status(500).json({error: '팔로워 목록을 가져오는데 실패하였습니다.'});
+    }
+  },
+  followUser: async (req, res) => {
+    if (!req.userId || !req.body.followingId) {
+      return res.status(401).json({error: 'Unauthorized'});
+    }
+
+    const followerId = req.userId;
+    const {followingId} = req.body;
+
+    if (followerId.toString() === followingId.toString()) {
+      return res.status(500).json({error: '본인을 팔로우할 수 없습니다.'});
+    }
+    try {
+      const isExistingFollow = await followService.isExistingFollow(followerId, followingId);
+
+      if (!isExistingFollow) {
+        await followService.follow(followerId, followingId);
+      } else {
+        return res.status(409).json({error: '이미 팔로우한 유저입니다.'});
+      }
+      return res.status(200).json({
+        message: '성공적으로 팔로우 하였습니다.',
+      });
+    } catch (error) {
+      res.status(500).json({error: '팔로우에 실패하였습니다.'});
     }
   },
 
   unfollowUser: async (req, res) => {
-    const {userId} = req.params;
-    const {targetUserId} = req.body;
+    if (!req.userId || !req.body.followingId) {
+      return res.status(401).json({error: 'Unauthorized'});
+    }
 
+    const followerId = req.userId;
+    const {followingId} = req.body;
+
+    if (followerId.toString() === followingId.toString()) {
+      return res.status(500).json({error: '본인을 언팔로우할 수 없습니다.'});
+    }
     try {
-      let isExistingFollow = await followService.isExistingFollow(followerId, followingId);
-      if(isExistingFollow) {
-        await followService.unfollow(userId, targetUserId);
+      const isExistingFollow = await followService.isExistingFollow(followerId, followingId);
+      if (isExistingFollow) {
+        await followService.unfollow(followerId, followingId);
+      } else {
+        return res.status(409).json({error: '팔로우하지 않은 유저입니다'});
       }
-      res.status(200).json({message: 'Successfully unfollowed the user.'});
+
+      return res.status(200).json({
+        message: '성공적으로 언팔로우 하였습니다.',
+      });
     } catch (error) {
-      res.status(500).json({error: 'Failed to unfollow the user.'});
+      res.status(500).json({error: '언팔로우에 실패하였습니다.'});
     }
   },
 };

@@ -2,7 +2,7 @@
 
 import {DataTypes, Model} from 'sequelize';
 import {sequelize} from '../../loaders/sequelize.js';
-import { models } from './index.js';
+import {models} from './index.js';
 import User from './user.js';
 
 class SocialLogin extends Model {}
@@ -33,14 +33,6 @@ SocialLogin.init(
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: true,
-      },
-      birthday: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      gender: {
-        type: DataTypes.ENUM('male', 'female', 'other'),
         allowNull: true,
       },
     },

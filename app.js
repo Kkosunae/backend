@@ -1,9 +1,11 @@
 import app from './loaders/express.js';
 import router from './src/routes/index.js';
 import {config, passport, yaml, swaggerUI, sequelize} from './loaders/module.js';
+import authMiddleware from './middlewares/authMiddleware.js';
 
 const openAPIDocument = yaml.load('./api/openapi.yaml');
 
+app.use(authMiddleware);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openAPIDocument));
 app.use('/', router);
 

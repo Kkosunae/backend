@@ -1,16 +1,17 @@
-import { models } from '../models/index.js';
+import {models} from '../models/index.js';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import {Op} from 'sequelize';
+import c from 'config';
 
-const { User, SocialLogin, Follow, FollowHistory } = models;
+const {User, SocialLogin, Follow, FollowHistory} = models;
 export const isMember = async (authId) => {
   try {
     // id가 authId이고 user_id가 null이 아닌 경우
     const socialLogin = await SocialLogin.findOne({
       where: {
-        id: authId,
+        auth_id: authId,
         user_id: {
           [Op.ne]: null,
         },
@@ -129,13 +130,36 @@ export const signInGoogle = async (googleToken) => {
 export const followService = {
   // 존재하는 팔로우인지 확인
   isExistingFollow: async (follower_id, following_id) => {
-    try {
-      const follow = await Follow.findOne({ where: { follower_id, following_id } });
-    } catch (error) {
-      throw new Error('Failed to check if the user is already following.');
-    }
+    const follow = await Follow.findOne({where: {follower_id, following_id}});
     if (follow) {
-      return follow.id;
+      return true;
+    }
+    return false;
+  },
+  getFollowingList: async (userId) => {
+    try {
+      const followList = await Follow.findAll({
+        where: {
+          following_id: userId,
+        },
+        attributes: ['id', 'following_id'],
+      });
+      return followList;
+    } catch (error) {
+      throw new Error('Failed to get follow list.');
+    }
+  },
+  getFollowerList: async (userId) => {
+    try {
+      const followList = await Follow.findAll({
+        where: {
+          follower_id: userId,
+        },
+        attributes: ['id', 'following_id'],
+      });
+      return followList;
+    } catch (error) {
+      throw new Error('Failed to get follow list.');
     }
   },
   follow: async (followerId, followingId) => {
@@ -150,8 +174,6 @@ export const followService = {
         following_id: followingId,
         action: 'follow',
       });
-
-      // 예: 사용자의 팔로워 수, 팔로잉 수 업데이트 등
     } catch (error) {
       throw new Error('Failed to follow the user.');
     }
@@ -159,30 +181,37 @@ export const followService = {
 
   unfollow: async (followerId, followingId) => {
     try {
-      const follow = await Follow.findOne({ where: { follower_id, following_id } });
-
-      await Follow.destroy({ where: { follower_id, following_id } });
+      const follow = await Follow.findOne(
+          {where: {follower_id: followerId, following_id: followingId}},
+      );
       await FollowHistory.create({
         follow_id: follow.id,
         follower_id: followerId,
         following_id: followingId,
         action: 'unfollow',
       });
-
+      await Follow.destroy({where: {
+        follower_id: followerId,
+        following_id: followingId,
+      }});
     } catch (error) {
       throw new Error('Failed to unfollow the user.');
     }
   },
 };
 
+/* 한국시간 기준 2달 기한의 jwt 발급 */
 export const getJwt = (userId) => {
+  const expiresInDays = 60; // Approximate 2 months as 60 days
+  const expiresInSeconds = expiresInDays * 24 * 60 * 60; // Convert to seconds
+
   const newJwt = jwt.sign(
       {
         id: userId,
       },
       config.get('jwt.token_secret'),
       {
-        expiresIn: '2m',
+        expiresIn: expiresInSeconds,
       },
   );
 
