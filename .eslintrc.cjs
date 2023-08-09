@@ -25,5 +25,6 @@ module.exports = {
     'linebreak-style': 0,
     'no-unused-vars': 'off',
     'require-jsdoc': 'off',
+    'max-len': ['error', {'code': 150, 'ignoreRegExpLiterals': true}],
   },
 };

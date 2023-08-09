@@ -5,7 +5,7 @@ import {sequelize} from '../../loaders/sequelize.js';
 import SocialLogin from './socialLogin.js';
 import Follow from './follow.js';
 import FollowHistory from './followHistory.js';
-import { models } from './index.js';
+import {models} from './index.js';
 
 class User extends Model {}
 

@@ -1,18 +1,19 @@
 'use strict';
 
 import express from 'express';
-import ctrl from '../controllers/user.js';
+import userCtrl from '../controllers/user/index.js';
+import followCtrl from '../controllers/user/follow.js';
 
 const router = express.Router();
 
-router.post('/kakao', ctrl.loginKakao);
-router.post('/google', ctrl.loginGoogle);
-router.post('/join', ctrl.join);
+router.post('/kakao', userCtrl.loginKakao);
+router.post('/google', userCtrl.loginGoogle);
+router.post('/join', userCtrl.join);
 
-router.post('/follow', ctrl.followingController.followUser);
-router.delete('/unfollow', ctrl.followingController.unfollowUser);
-// 팔로우 목록
-router.get('/following/:userId', ctrl.followingController.getFollowingList);
-router.get('/follower/:userId', ctrl.followingController.getFollowerList);
+// 팔로우 관련
+router.post('/follow', followCtrl.followController.followUser);
+router.delete('/unfollow', followCtrl.followController.unfollowUser);
+router.get('/following/:userId', followCtrl.followController.getFollowingList);
+router.get('/follower/:userId', followCtrl.followController.getFollowerList);
 
 export default router;
