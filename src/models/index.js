@@ -4,12 +4,16 @@ import User from './user.js';
 import SocialLogin from './socialLogin.js';
 import Follow from './follow.js';
 import FollowHistory from './followHistory.js';
+import Post from './post.js';
+import PostImage from './postImage.js';
 
 const models = {
   User,
   SocialLogin,
   Follow,
   FollowHistory,
+  Post,
+  PostImage,
 };
 
 SocialLogin.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
@@ -26,6 +30,12 @@ FollowHistory.belongsTo(Follow, {foreignKey: 'follow_id', as: 'follow', constrai
 User.hasMany(FollowHistory, {foreignKey: 'follower_id', as: 'follower'});
 User.hasMany(FollowHistory, {foreignKey: 'following_id', as: 'following'});
 Follow.hasMany(FollowHistory, {foreignKey: 'follow_id', as: 'follow'});
+
+Post.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
+User.hasMany(Post, {foreignKey: 'user_id', as: 'post'});
+
+PostImage.belongsTo(Post, {foreignKey: 'post_id', as: 'post'});
+Post.hasMany(PostImage, {foreignKey: 'post_id', as: 'postImage'});
 
 
 export {models};

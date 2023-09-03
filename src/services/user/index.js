@@ -131,17 +131,12 @@ export const signInGoogle = async (googleToken) => {
 
 
 export const signInApple = async (appleToken) => {
-  console.log(111);
-
   try {
-    console.log(222);
     const response = await axios.get('https://appleid.apple.com/auth/userinfo', {
       headers: {
         Authorization: `Bearer ${appleToken}`,
       },
     });
-    console.log(333);
-    console.log(response);
   } catch (error) {
     console.log(error);
     if (error.response && error.response.status === 401) {

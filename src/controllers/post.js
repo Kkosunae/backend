@@ -1,29 +1,27 @@
 'use strict';
 
 import postService from '../services/post.js';
-import {uploadImages} from '../services/aws.js';
-import AppleStrategy from 'passport-apple';
 import config from 'config';
 
 // import {success, fail} from '../util/responseStatus.js';
 
 const createPost = async (req, res) => {
   try {
-    const {title, content, authorId} = req.body; // 클라이언트에서 전송된 데이터
+    const userId = req.userId;
+
+    const {content, latitude, longitude} = req.body; // 클라이언트에서 전송된 데이터
     const images = req.files;
-    console.log(images);
+    const imageUrls = images.map((image) => image.location);
 
-    const imageUrls = await uploadImages(images);
-    console.log(imageUrls);
-    // 글 작성 서비스 호출
-    // const newPost = await postService.createPost({title, content, authorId});
+    const newPost = await postService.createPost({userId, content, latitude, longitude, imageUrls});
 
-    return res.status(201).json(imageUrls);
+    return res.status(201).json({message: '글 작성에 성공했습니다.'});
   } catch (error) {
     console.error(error);
     return res.status(500).json({message: '글 작성 중 오류가 발생했습니다.'});
   }
 };
+
 export default {
   createPost,
 };
