@@ -11,20 +11,17 @@ const upload = multer({
     acl: 'public-read',
     limits: {fileSize: 20 * 1024 * 1024}, // 최대 20MB 파일
     key: function(req, file, cb) {
-      console.log(req.userId);
       if (!req.userId) {
-        return res.status(401).json({error: 'Unauthorized'});
+        return cb(new Error('Unauthorized'), null);
       }
 
       req.fileCount = req.fileCount || 0;
       const formattedDate = moment().format('YYYY/MM/DD');
       const formattedTime = moment().format('YYMMDDHHmmss');
-      const fileName = `${formattedTime}_${req.userId}_${file.originalname}`;
       const count = ++req.fileCount;
+      const fileName = `${formattedTime}_${req.userId}_${count}_${file.originalname}`;
 
-      // 카운트가 1 이상일 때만 카운트를 파일명에 추가
-      const finalFileName = count > 1 ? `${fileName}_${count}` : `${fileName}_1`;
-      const filePath = `post/${formattedDate}/${finalFileName}`;
+      const filePath = `images/post/${formattedDate}/${fileName}`;
       cb(null, filePath);
     },
   }),
