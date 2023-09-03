@@ -41,6 +41,10 @@ const loginKakao = async (req, res) => {
   }
 };
 
+/* 구글 로그인
+  access token 테스트 시 아래로 접속하면 됨
+  https://accounts.google.com/o/oauth2/auth?client_id=807916056194-gjsoiiocvfnapn7tv7ubsr3jtqq62rqh.apps.googleusercontent.com&redirect_uri=http://127.0.0.1:8080/user/google&scope=profile+email&response_type=token
+*/
 const loginGoogle = async (req, res) => {
   // post 로 전달받은 바디에서 토큰 추출
   const accessToken = req.body.accessToken;

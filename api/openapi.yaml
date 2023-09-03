@@ -120,6 +120,49 @@ paths:
                                 error:
                                     type: string
                                     example: "유효하지 않은 토큰입니다."
+  /user/apple:
+    post:
+        tags: 
+            - user
+        summary: 애플 로그인, 회원가입
+        description: 파라미터가 accessToken 인 post api으로 jwt 토큰을 반환한다.
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            accessToken:
+                                type: string
+                                example: "accessToken"
+        responses:
+            '200':
+                description: 성공
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                type:
+                                    type: string
+                                    example: "login or register"
+                                jwt:
+                                    type: string
+                                    example: "123456789"
+                                user_id:
+                                    type: int
+                                    example: 1
+            '401':
+                description: "accessToken 이 유효하지 않을 때"
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                error:
+                                    type: string
+                                    example: "유효하지 않은 토큰입니다."
   /user/join:
     post:
         tags: 

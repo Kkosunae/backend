@@ -1,5 +1,6 @@
 import express from 'express';
 import user_route from './user.js';
+import post_route from './post.js';
 
 const router = express.Router();
 
@@ -9,5 +10,6 @@ router.get('/health_check', (req, res) => {
 });
 
 router.use('/user', user_route);
+router.use('/post', post_route);
 
 export default router;

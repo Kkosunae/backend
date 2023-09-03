@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --debug app",
+    "dev": "nodemon --inspect app",
     "start": "node app.js"
   },
   "repository": {
@@ -21,15 +21,21 @@
   },
   "homepage": "https://github.com/Kkosunae/backend#readme",
   "dependencies": {
+    "apple-auth": "^1.0.9",
+    "aws-sdk": "^2.1445.0",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "config": "^3.3.9",
     "cors": "^2.8.5",
     "eslint-config-prettier": "^8.8.0",
     "express": "^4.18.2",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.1",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^2.10.0",
     "mysql2": "^3.5.1",
     "passport": "^0.6.0",
+    "passport-apple": "^2.0.2",
     "sequelize": "^6.32.1",
     "swagger-ui-express": "^5.0.0",
     "winston": "^3.10.0",

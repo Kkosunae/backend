@@ -61,8 +61,16 @@ export const createSocialLogin = async (type, data) => {
       return socialLogin.id;
     } else if (type == 'google') {
       const socialLogin = await SocialLogin.create({
-        type: type,
-        id: data.sub,
+        auth_type: type,
+        auth_id: authId,
+        name: data.name,
+        email: data.email,
+        user_id: null,
+      });
+    } else if (type == 'apple') {
+      const socialLogin = await SocialLogin.create({
+        auth_type: type,
+        auth_id: authId,
         name: data.name,
         email: data.email,
         user_id: null,
@@ -98,6 +106,58 @@ export const signInKakao = async (kakaoToken) => {
   return kakaoData;
 };
 
+export const signInGoogle = async (googleToken) => {
+  let result = {};
+
+  try {
+    result = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: {
+        Authorization: `Bearer ${googleToken}`,
+      },
+    });
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      const err = new Error('유효하지 않은 토큰입니다.');
+      err.response = error.response;
+      throw err;
+    }
+    const err = new Error('구글 로그인에 실패했습니다.');
+    err.response = error.response;
+    throw err;
+  }
+  const googleData = result.data;
+  return googleData;
+};
+
+
+export const signInApple = async (appleToken) => {
+  console.log(111);
+
+  try {
+    console.log(222);
+    const response = await axios.get('https://appleid.apple.com/auth/userinfo', {
+      headers: {
+        Authorization: `Bearer ${appleToken}`,
+      },
+    });
+    console.log(333);
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+    if (error.response && error.response.status === 401) {
+      const err = new Error('유효하지 않은 토큰입니다.');
+      err.response = error.response;
+      throw err;
+    }
+    const err = new Error('애플 로그인에 실패했습니다.');
+    err.response = error.response;
+    throw err;
+  }
+
+  const appleData = response.data;
+  return appleData;
+};
+
 export const userJoin = async (authId, birthday, gender) => {
   try {
     // user 테이블에 auth_id 컬럼 추가
@@ -122,29 +182,6 @@ export const userJoin = async (authId, birthday, gender) => {
   }
 };
 
-
-export const signInGoogle = async (googleToken) => {
-  let result = {};
-
-  try {
-    result = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
-      headers: {
-        Authorization: `Bearer ${googleToken}`,
-      },
-    });
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      const err = new Error('유효하지 않은 토큰입니다.');
-      err.response = error.response;
-      throw err;
-    }
-    const err = new Error('구글 로그인에 실패했습니다.');
-    err.response = error.response;
-    throw err;
-  }
-  const googleData = result.data;
-  return googleData;
-};
 
 /* 한국시간 기준 2달 기한의 jwt 발급 */
 export const getJwt = (userId) => {
