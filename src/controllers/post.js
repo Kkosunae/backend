@@ -22,6 +22,19 @@ const createPost = async (req, res) => {
   }
 };
 
+const getPost = async (req, res) => {
+  try {
+    const {latitude, longitude} = req.body;
+    const posts = await postService.getPost(latitude, longitude);
+    return res.status(200).json({posts});
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({message: '게시글 조회 중 오류가 발생했습니다.'});
+  }
+};
+
+
 export default {
   createPost,
+  getPost,
 };

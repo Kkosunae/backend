@@ -6,6 +6,7 @@ import Follow from './follow.js';
 import FollowHistory from './followHistory.js';
 import Post from './post.js';
 import PostImage from './postImage.js';
+import Map from './map.js';
 
 const models = {
   User,
@@ -14,6 +15,7 @@ const models = {
   FollowHistory,
   Post,
   PostImage,
+  Map,
 };
 
 SocialLogin.belongsTo(User, {foreignKey: 'user_id', as: 'user'});

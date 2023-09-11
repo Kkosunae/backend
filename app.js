@@ -1,16 +1,18 @@
 import app from './loaders/express.js';
 import router from './src/routes/index.js';
-import {config, passport, yaml, swaggerUI, sequelize} from './loaders/module.js';
+import {config, yaml, swaggerUI, sequelize} from './loaders/module.js';
 import authMiddleware from './middlewares/authMiddleware.js';
+import express from 'express';
 
 const openAPIDocument = yaml.load('./api/openapi.yaml');
 
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 app.use(authMiddleware);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openAPIDocument));
 app.use('/', router);
 
 app.listen(config.get('server.port'));
-
 
 // 모델과 데이터베이스 동기화
 (async () => {

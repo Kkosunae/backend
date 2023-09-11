@@ -1,8 +1,9 @@
 import {models} from '../models/index.js';
+import Sequelize from 'sequelize';
+const {Op} = Sequelize;
 
 const {Post, PostImage} = models;
 
-//* 활성 유저인지 확인
 export const createPost = async ({userId, content, latitude, longitude, imageUrls}) => {
   try {
     // 게시물 생성
@@ -29,7 +30,39 @@ export const createPost = async ({userId, content, latitude, longitude, imageUrl
   }
 };
 
+export const getPost = async (latitude, longitude) => {
+  try {
+    const radius = 0.3; // 300m를 킬로미터로 환산
+    const earthRadius = 6371; // 지구 반지름 (킬로미터)
+
+    const posts = await Post.findAll({
+      include: [
+        {
+          model: PostImage,
+          attributes: ['url'],
+          as: 'postImage',
+        },
+      ],
+      where: Sequelize.where(
+          Sequelize.fn(
+              'acos',
+              Sequelize.literal(
+                  `sin(RADIANS(${latitude})) * sin(RADIANS(latitude)) + cos(RADIANS(${latitude})) * cos(RADIANS(latitude)) * cos(RADIANS(${longitude} - longitude))`,
+              ),
+          ),
+          {
+            [Op.lte]: radius / earthRadius,
+          },
+      ),
+    });
+    return posts;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   createPost,
+  getPost,
 };
 
