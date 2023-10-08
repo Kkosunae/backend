@@ -24,6 +24,11 @@ Post.init(
         type: DataTypes.STRING(2200), // 2200자까지 입력 가능
         allowNull: false,
       },
+      isDeleted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false, // 기본값으로 삭제되지 않은 상태로 설정
+        allowNull: false,
+      },
     },
     {
       sequelize,

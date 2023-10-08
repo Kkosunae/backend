@@ -4,6 +4,15 @@ import {s3} from '../src/services/aws.js';
 import config from 'config';
 import moment from 'moment';
 
+const fileFilter = (req, file, cb) => {
+  const {content, latitude, longitude} = req.body;
+  if (content.length > 2200) {
+    cb(new Error('게시글은 2200자를 초과할 수 없습니다.'), false);
+  } else {
+    cb(null, true);
+  }
+};
+
 const upload = multer({
   storage: multerS3({
     s3: s3,
@@ -25,6 +34,7 @@ const upload = multer({
       cb(null, filePath);
     },
   }),
+  fileFilter: fileFilter,
 });
 
 export default upload;

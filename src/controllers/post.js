@@ -10,6 +10,9 @@ const createPost = async (req, res) => {
     const userId = req.userId;
 
     const {content, latitude, longitude} = req.body; // 클라이언트에서 전송된 데이터
+    if (content.length > 2200) {
+      return res.status(400).json({message: '게시글은 2200자를 초과할 수 없습니다.'});
+    }
     const images = req.files;
     const imageUrls = images.map((image) => image.location);
 
