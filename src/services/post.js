@@ -12,6 +12,7 @@ export const createPost = async ({userId, content, latitude, longitude, imageUrl
       latitude,
       longitude,
       user_id: userId,
+      isDeleted: false,
     });
 
     // 이미지 URL 저장

@@ -38,8 +38,12 @@ const followController = {
     }
   },
   followUser: async (req, res) => {
-    if (!req.userId || !req.body.userId) {
+    if (!req.userId) {
       return res.status(401).json({error: 'Unauthorized'});
+    }
+
+    if (!req.body.userId) {
+      return res.status(400).json({error: '팔로우할 유저가 전달되지 않았습니다.'});
     }
 
     const followerId = req.userId;
@@ -67,9 +71,14 @@ const followController = {
   },
 
   unfollowUser: async (req, res) => {
-    if (!req.userId || !req.body.userId) {
+    if (!req.userId) {
       return res.status(401).json({error: 'Unauthorized'});
     }
+
+    if (!req.body.userId) {
+      return res.status(400).json({error: '팔로우할 유저가 전달되지 않았습니다.'});
+    }
+
 
     const followerId = req.userId;
     const followingId = req.body.userId;

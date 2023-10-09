@@ -7,6 +7,7 @@ import FollowHistory from './followHistory.js';
 import Post from './post.js';
 import PostImage from './postImage.js';
 import Map from './map.js';
+import Walk from './walk.js';
 
 const models = {
   User,
@@ -16,6 +17,7 @@ const models = {
   Post,
   PostImage,
   Map,
+  Walk,
 };
 
 SocialLogin.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
@@ -39,6 +41,8 @@ User.hasMany(Post, {foreignKey: 'user_id', as: 'post'});
 PostImage.belongsTo(Post, {foreignKey: 'post_id', as: 'post'});
 Post.hasMany(PostImage, {foreignKey: 'post_id', as: 'postImage'});
 
+Walk.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
+User.hasMany(Walk, {foreignKey: 'user_id', as: 'walk'});
 
 export {models};
 

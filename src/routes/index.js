@@ -1,6 +1,7 @@
 import express from 'express';
 import user_route from './user.js';
 import map_route from './map.js';
+import walk_route from './walk.js';
 
 const router = express.Router();
 
@@ -11,5 +12,6 @@ router.get('/health_check', (req, res) => {
 
 router.use('/user', user_route);
 router.use('/map', map_route);
+router.use('/walk', walk_route);
 
 export default router;
