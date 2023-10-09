@@ -87,9 +87,9 @@ class WalkService {
       const statistics = await Walk.findAll({
         attributes: [
           [sequelize.fn('COUNT', sequelize.col('id')), 'walkCount'],
-          [sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime)))')), 'averageDuration'],
-          [sequelize.fn('SUM', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime)))')), 'totalDuration'],
-          [sequelize.fn('MAX', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime)))')), 'maxDuration'],
+          [sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime))')), 'averageDuration'],
+          [sequelize.fn('SUM', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime))')), 'totalDuration'],
+          [sequelize.fn('MAX', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime))')), 'maxDuration'],
           [
             sequelize.fn(
                 'TIME_FORMAT',
