@@ -4,16 +4,16 @@ import {s3} from '../src/services/aws.js';
 import config from 'config';
 import moment from 'moment';
 
-const fileFilter = (req, file, cb) => {
-  const {content, latitude, longitude} = req.body;
-  if (content.length > 2200) {
-    cb(new Error('게시글은 2200자를 초과할 수 없습니다.'), false);
+const mapPostFileFilter = (req, file, cb) => {
+  const {content} = req.body;
+  if (content.length > 500) {
+    cb(new Error('게시글은 500자를 초과할 수 없습니다.'), false);
   } else {
     cb(null, true);
   }
 };
 
-const upload = multer({
+const mapPostUpload = multer({
   storage: multerS3({
     s3: s3,
     bucket: config.get('s3.bucket'),
@@ -30,11 +30,46 @@ const upload = multer({
       const count = ++req.fileCount;
       const fileName = `${formattedTime}_${req.userId}_${count}_${file.originalname}`;
 
-      const filePath = `images/post/${formattedDate}/${fileName}`;
+      const filePath = `images/map/post/${formattedDate}/${fileName}`;
       cb(null, filePath);
     },
   }),
-  fileFilter: fileFilter,
+  fileFilter: mapPostFileFilter,
 });
 
-export default upload;
+
+const communityPostFileFilter = (req, file, cb) => {
+  const {content} = req.body;
+  if (content.length > 1000) {
+    cb(new Error('게시글은 1000자를 초과할 수 없습니다.'), false);
+  } else {
+    cb(null, true);
+  }
+};
+
+const communityPostUpload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: config.get('s3.bucket'),
+    acl: 'public-read',
+    limits: {fileSize: 20 * 1024 * 1024}, // 최대 20MB 파일
+    key: function(req, file, cb) {
+      if (!req.userId) {
+        return cb(new Error('Unauthorized'), null);
+      }
+
+      req.fileCount = req.fileCount || 0;
+      const formattedDate = moment().format('YYYY/MM/DD');
+      const formattedTime = moment().format('YYMMDDHHmmss');
+      const count = ++req.fileCount;
+      const fileName = `${formattedTime}_${req.userId}_${count}_${file.originalname}`;
+
+      const filePath = `images/community/post/${formattedDate}/${fileName}`;
+      cb(null, filePath);
+    },
+  }),
+  fileFilter: communityPostFileFilter,
+});
+
+
+export {mapPostUpload, communityPostUpload};

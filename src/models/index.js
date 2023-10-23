@@ -8,6 +8,9 @@ import Post from './post.js';
 import PostImage from './postImage.js';
 import Map from './map.js';
 import Walk from './walk.js';
+import CommunityPost from './communityPost.js';
+import CommunityPostImage from './communityPostImage.js';
+import CommunityPostComment from './communityPostComment.js';
 
 const models = {
   User,
@@ -18,6 +21,9 @@ const models = {
   PostImage,
   Map,
   Walk,
+  CommunityPost,
+  CommunityPostImage,
+  CommunityPostComment,
 };
 
 SocialLogin.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
@@ -43,6 +49,15 @@ Post.hasMany(PostImage, {foreignKey: 'post_id', as: 'postImage'});
 
 Walk.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
 User.hasMany(Walk, {foreignKey: 'user_id', as: 'walk'});
+
+CommunityPost.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
+User.hasMany(CommunityPost, {foreignKey: 'user_id', as: 'communityPost'});
+
+CommunityPostImage.belongsTo(CommunityPost, {foreignKey: 'community_post_id', as: 'communityPost'});
+CommunityPost.hasMany(CommunityPostImage, {foreignKey: 'community_post_id', as: 'communityPostImage'});
+
+CommunityPostComment.belongsTo(CommunityPost, {foreignKey: 'community_post_id', as: 'communityPost'});
+CommunityPost.hasMany(CommunityPostComment, {foreignKey: 'community_post_id', as: 'communityPostComment'});
 
 export {models};
 
