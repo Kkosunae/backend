@@ -10,7 +10,14 @@ const router = express.Router();
 
 router.post('/kakao', userCtrl.loginKakao);
 router.post('/google', userCtrl.loginGoogle);
-// router.post('/apple', userCtrl.loginApple);
+router.post('/apple', userCtrl.loginApple);
+router.get('/test', (req, res) => {
+  res.status(200).send('test');
+});
+router.get('/apple/callback', (req, res) => {
+  console.log(req.query);
+  return res.status(200).json({message: 'apple callback'});
+});
 // router.get('/apple', passport.authenticate('apple'));
 // router.get('/apple', (req, res) => {
 //   const configs = {

@@ -3,6 +3,13 @@ import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import {Op} from 'sequelize';
+import AppleAuth from 'apple-auth';
+import fs from 'fs';
+
+const keyFile = fs.readFileSync('/Users/jeonhyeonseong/development/backend/kkosunae-backend/config/AuthKey_8JRY5DF265.p8');
+const decodedKey = keyFile.toString('utf8');
+let auth = new AppleAuth(config.get('apple'), decodedKey, 'text');
+console.log('auth = ', auth);
 
 const {User, SocialLogin} = models;
 
@@ -130,27 +137,29 @@ export const signInGoogle = async (googleToken) => {
 };
 
 
-export const signInApple = async (appleToken) => {
+export const signInApple = async (accessToken) => {
+  console.log(config.get('apple'));
+  console.log('1');
+  console.log(auth);
+  let result = {};
   try {
-    const response = await axios.get('https://appleid.apple.com/auth/userinfo', {
-      headers: {
-        Authorization: `Bearer ${appleToken}`,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    if (error.response && error.response.status === 401) {
-      const err = new Error('유효하지 않은 토큰입니다.');
-      err.response = error.response;
-      throw err;
-    }
-    const err = new Error('애플 로그인에 실패했습니다.');
-    err.response = error.response;
-    throw err;
+    console.log('2');
+    const response = await auth.accessToken(accessToken);
+    console.log(response);
+    const idToken = jwt.verify(response.id_token, accessToken);
+    console.log(idToken);
+    result = {
+      id: idToken.sub,
+      name: idToken.name,
+      email: idToken.email,
+    };
+    console.log(result);
+  } catch (err) {
+    console.log(err);
+    throw new Error(`500: ${err.toString()}`);
   }
 
-  const appleData = response.data;
-  return appleData;
+  return result;
 };
 
 export const userJoin = async (authId, birthday, gender) => {
