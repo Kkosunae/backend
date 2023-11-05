@@ -1,8 +1,8 @@
 import express from 'express';
-import user_route from './user.js';
-import map_route from './map.js';
-import walk_route from './walk.js';
-import community_route from './community.js';
+import userRouter from './user.js';
+import mapRouter from './map.js';
+import walkRouter from './walk.js';
+import communityRouter from './community.js';
 
 const router = express.Router();
 
@@ -11,9 +11,9 @@ router.get('/health_check', (req, res) => {
   res.status(200).send('OK');
 });
 
-router.use('/user', user_route);
-router.use('/map', map_route);
-router.use('/walk', walk_route);
-router.use('/community', community_route);
+router.use('/user', userRouter);
+router.use('/map', mapRouter);
+router.use('/walk', walkRouter);
+router.use('/community', communityRouter);
 
 export default router;

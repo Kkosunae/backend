@@ -1,14 +1,14 @@
 'use strict';
 
 import express from 'express';
-import walkCtrl from '../controllers/walk.js';
+import walkController from '../controllers/walk.js';
 import config from 'config';
 import passport from 'passport';
 
 const router = express.Router();
 
-router.post('/start', walkCtrl.startWalk);
-router.post('/end', walkCtrl.endWalk);
-router.get('/statistics', walkCtrl.getStatistics);
+router.post('/start', walkController.startWalk);
+router.post('/end', walkController.endWalk);
+router.get('/statistics', walkController.getStatistics);
 
 export default router;

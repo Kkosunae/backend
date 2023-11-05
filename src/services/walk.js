@@ -4,12 +4,8 @@ import sequelize from 'sequelize';
 
 const {Walk} = models;
 
-const attributes = {
-  exclude: ['createdAt', 'updatedAt'], // createdAt 및 updatedAt 칼럼 제외 설정
-};
-
-class WalkService {
-  async isWalking(userId) {
+export const walkService = {
+  isWalking: async (userId) => {
     try {
       const walk = await Walk.findOne(
           {where: {user_id: userId, isWalking: true}},
@@ -18,9 +14,8 @@ class WalkService {
     } catch (error) {
       return false;
     }
-  }
-
-  async isValidWalk(userId, walkId) {
+  },
+  isValidWalk: async (userId, walkId) => {
     try {
       const walk = await Walk.findOne(
           {where: {id: walkId, user_id: userId, isWalking: true}},
@@ -29,9 +24,8 @@ class WalkService {
     } catch (error) {
       return false;
     }
-  }
-
-  async startWalk(userId, latitude, longitude) {
+  },
+  startWalk: async (userId, latitude, longitude) => {
     try {
       const walk = await Walk.create({
         startTime: new Date(),
@@ -45,9 +39,8 @@ class WalkService {
       console.error(error);
       throw new Error('Error starting walk');
     }
-  }
-
-  async endWalk(userId, walkId, latitude, longitude) {
+  },
+  endWalk: async (userId, walkId, latitude, longitude) => {
     try {
       const walk = await Walk.findOne(
           {where: {id: walkId, user_id: userId, isWalking: true}},
@@ -63,15 +56,14 @@ class WalkService {
       walk.endLongitude = longitude;
       await walk.save();
 
-      walk.duration = this.calculateDuration(walk.startTime, walk.endTime);
+      walk.duration = calculateDuration(walk.startTime, walk.endTime);
       return walk;
     } catch (error) {
       console.error(error);
       throw new Error('Error ending walk');
     }
-  }
-
-  calculateDuration(startTime, endTime) {
+  },
+  calculateDuration: (startTime, endTime) => {
     if (!startTime || !endTime) {
       return null;
     }
@@ -80,9 +72,8 @@ class WalkService {
     const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
 
     return durationInSeconds;
-  }
-
-  async getTotalStatistics() {
+  },
+  getTotalStatistics: async () => {
     try {
       const statistics = await Walk.findAll({
         attributes: [
@@ -112,9 +103,8 @@ class WalkService {
       console.error(error);
       throw new Error('Error getting total statistics');
     }
-  }
-
-  async getDailyStatistics() {
+  },
+  getDailyStatistics: async () => {
     try {
       const statistics = await Walk.findAll({
         attributes: [
@@ -143,9 +133,8 @@ class WalkService {
       console.error(error);
       throw new Error('Error getting daily statistics');
     }
-  }
-
-  async getWeeklyStatistics() {
+  },
+  getWeeklyStatistics: async () => {
     try {
       const statistics = await Walk.findAll({
         attributes: [
@@ -173,9 +162,8 @@ class WalkService {
       console.error(error);
       throw new Error('Error getting weekly statistics');
     }
-  }
-
-  async getMonthlyStatistics() {
+  },
+  getMonthlyStatistics: async () => {
     try {
       const statistics = await Walk.findAll({
         attributes: [
@@ -203,9 +191,8 @@ class WalkService {
       console.error(error);
       throw new Error('Error getting monthly statistics');
     }
-  }
-
-  async getRecentWalk() {
+  },
+  getRecentWalk: async () => {
     try {
       const recentWalk = await Walk.findOne({
         where: {
@@ -223,7 +210,7 @@ class WalkService {
       console.error(error);
       throw new Error('Error getting recent walk');
     }
-  }
-}
+  },
+};
 
-export default WalkService;
+export default walkService;

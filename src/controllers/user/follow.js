@@ -1,7 +1,7 @@
 'use strict';
 
-import {followService} from '../../services/user/follow.js';
-import {isActiveUser} from '../../services/user/index.js';
+import followService from '../../services/user/follow.js';
+import userService from '../../services/user/index.js';
 // import {success, fail} from '../util/responseStatus.js';
 
 const followController = {
@@ -50,7 +50,7 @@ const followController = {
     const followingId = req.body.userId;
 
     // 본인을 팔로우하거나 활성유저가 아닐 시 팔로우 불가
-    if (followerId.toString() === followingId.toString() || !isActiveUser(followingId)) {
+    if (followerId.toString() === followingId.toString() || !userService.isActiveUser(followingId)) {
       return res.status(403).json({error: '팔로우할 수 없는 유저입니다.'});
     }
     try {
@@ -79,11 +79,10 @@ const followController = {
       return res.status(400).json({error: '팔로우할 유저가 전달되지 않았습니다.'});
     }
 
-
     const followerId = req.userId;
     const followingId = req.body.userId;
 
-    if (followerId.toString() === followingId.toString() || !isActiveUser(followingId)) {
+    if (followerId.toString() === followingId.toString() || !userService.isActiveUser(followingId)) {
       return res.status(403).json({error: '언팔로우할 수 없는 유저입니다.'});
     }
     try {
@@ -105,6 +104,4 @@ const followController = {
 };
 
 
-export default {
-  followController,
-};
+export default followController;

@@ -1,16 +1,16 @@
 'use strict';
 
 import express from 'express';
-import userCtrl from '../controllers/user/index.js';
-import followCtrl from '../controllers/user/follow.js';
+import userController from '../controllers/user/index.js';
+import followController from '../controllers/user/follow.js';
 import config from 'config';
 import passport from 'passport';
 
 const router = express.Router();
 
-router.post('/kakao', userCtrl.loginKakao);
-router.post('/google', userCtrl.loginGoogle);
-// router.post('/apple', userCtrl.loginApple);
+router.post('/kakao', userController.loginKakao);
+router.post('/google', userController.loginGoogle);
+// router.post('/apple', userController.loginApple);
 // router.get('/apple', passport.authenticate('apple'));
 // router.get('/apple', (req, res) => {
 //   const configs = {
@@ -28,13 +28,13 @@ router.post('/google', userCtrl.loginGoogle);
 //   res.redirect(`https://appleid.apple.com/auth/authorize?${queryString}`);
 // },
 // );
-// router.get('/apple/callback', userCtrl.loginApple);
-router.post('/join', userCtrl.join);
+// router.get('/apple/callback', userController.loginApple);
+router.post('/join', userController.join);
 
 // 팔로우 관련
-router.post('/follow', followCtrl.followController.followUser);
-router.delete('/unfollow', followCtrl.followController.unfollowUser);
-router.get('/following/:userId', followCtrl.followController.getFollowingList);
-router.get('/follower/:userId', followCtrl.followController.getFollowerList);
+router.post('/follow', followController.followUser);
+router.delete('/unfollow', followController.unfollowUser);
+router.get('/following/:userId', followController.getFollowingList);
+router.get('/follower/:userId', followController.getFollowerList);
 
 export default router;
