@@ -15,7 +15,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: 18.14.0
 
     - name: Install dependencies
       run: |
@@ -35,19 +35,19 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           # 원격 서버의 config 폴더를 로컬로 복사
-          scp -r ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/ec2-user/config .
-          
+          scp -r -i "${{ secrets.SSH_PRIVATE_KEY }}" ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/ec2-user/config .
+
     - name: Build and push Docker image
       run: |
         # Docker 이미지 빌드
         docker build -t kkosunae-dev . --platform linux/amd64
         
         # ECR 로그인
-        aws ecr get-login-password --region ap-northeast-2 | docker login -u AWS --password-stdin ${{ secrets.ECR_URI}}
+        aws ecr get-login-password --region ap-northeast-2 | docker login -u AWS --password-stdin ${{ secrets.ECR_URI }}
         
         # 이미지 ECR에 푸시
-        docker tag kkosunae-dev ${{ secrets.ECR_URI}}/kkosunae-dev:latest
-        docker push ${{ secrets.ECR_URI}}/kkosunae-dev:latest
+        docker tag kkosunae-dev ${{ secrets.ECR_URI }}/kkosunae-dev:latest
+        docker push ${{ secrets.ECR_URI }}/kkosunae-dev:latest
       env:
         AWS_DEFAULT_REGION: ap-northeast-2
 
