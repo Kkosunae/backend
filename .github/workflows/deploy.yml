@@ -46,9 +46,10 @@ jobs:
                 "access_key": "${{ secrets.S3_ACCESS_KEY }}",
                 "access_secret_key": "${{ secrets.S3_ACCESS_SECRET_KEY }}"
             }
-        }' > config/default.json
-      env:
-        MAP_API_KEY: ${{ secrets.MAP_API_KEY }}
+        }' > default.json
+
+        mkdir -p config
+        mv default.json config/
     - name: Configure AWS credentials
       run: |
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
