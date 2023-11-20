@@ -21,22 +21,39 @@ jobs:
       run: |
         npm install
 
+    - name: Create config file
+      run: |
+        echo '{
+            "server": {
+                "domain": "http://127.0.0.1:8080/",
+                "port": "8080",
+                "state": "dev",
+                "timezone": "Asia/Seoul"
+            },
+            "mysql": {
+                "host": "${{ secrets.MYSQL_HOST }}",
+                "username": "${{ secrets.MYSQL_USERNAME }}",
+                "password": "${{ secrets.MYSQL_PASSWORD }}",
+                "database": "kkosunae",
+                "dialect": "mysql",
+                "timezone": "+09:00"
+            },
+            "jwt": {
+                "token_secret": "${{ secrets.JWT_TOKEN_SECRET }}"
+            },
+            "s3": {
+                "bucket": "${{ secrets.S3_BUCKET }}",
+                "access_key": "${{ secrets.S3_ACCESS_KEY }}",
+                "access_secret_key": "${{ secrets.S3_ACCESS_SECRET_KEY }}"
+            }
+        }' > default.json
+      env:
+        MAP_API_KEY: ${{ secrets.MAP_API_KEY }}
     - name: Configure AWS credentials
       run: |
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ap-northeast-2
-
-    - name: SSH into remote server and copy config folder
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.REMOTE_HOST }}
-        username: ${{ secrets.REMOTE_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          # 원격 서버의 config 폴더를 로컬로 복사
-          scp -r -i "${{ secrets.SSH_PRIVATE_KEY }}" ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/ec2-user/config .
-
     - name: Build and push Docker image
       run: |
         # Docker 이미지 빌드
