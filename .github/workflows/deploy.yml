@@ -90,4 +90,4 @@ jobs:
           sudo docker rm kkosunae-dev-container || true
           sudo docker images -f "dangling=true" -q | xargs docker rmi || true
 
-          sudo docker run -p 8000:8000 -d --name kkosunae-dev-container ${{ secrets.ECR_URI }}/kkosunae-dev:latest
+          sudo docker run -p 8080:8080 -d --name kkosunae-dev-container ${{ secrets.ECR_URI }}/kkosunae-dev:latest
