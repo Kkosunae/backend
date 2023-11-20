@@ -1,0 +1,65 @@
+name: Docker Build and Deploy for main
+
+on:
+  push:
+    branches:
+      - main # main에 push가 들어올 때 실행
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install dependencies
+      run: |
+        npm install
+
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set default.region ap-northeast-2
+
+    - name: Build and push Docker image
+      run: |
+        # Docker 이미지 빌드
+        docker build -t kkosunae-dev . --platform linux/amd64
+        
+        # ECR 로그인
+        aws ecr get-login-password --region ap-northeast-2 | docker login -u AWS --password-stdin ${{ secrets.ECR_URI}}
+        
+        # 이미지 ECR에 푸시
+        docker tag kkosunae-dev ${{ secrets.ECR_URI}}/kkosunae-dev:latest
+        docker push ${{ secrets.ECR_URI}}/kkosunae-dev:latest
+      env:
+        AWS_DEFAULT_REGION: ap-northeast-2
+
+    - name: SSH into remote server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          
+          # ECR 로그인 셋팅
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region ap-northeast-2
+          # ECR 로그인
+          sudo docker login -u AWS -p $(aws ecr get-login-password --region ap-northeast-2) ${{ secrets.ECR_URI }}/kkosunae-dev
+
+          # 원격 서버에 도커 이미지 푸시 및 실행 스크립트 실행
+          sudo docker pull ${{ secrets.ECR_URI }}/kkosunae-dev:latest
+          sudo docker stop kkosunae-dev-container || true
+          sudo docker rm kkosunae-dev-container || true
+          sudo docker images -f "dangling=true" -q | xargs docker rmi || true
+
+          sudo docker run -p 8000:8000 -d --name kkosunae-dev-container ${{ secrets.ECR_URI }}/kkosunae-dev:latest
