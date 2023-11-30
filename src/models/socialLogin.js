@@ -14,7 +14,7 @@ SocialLogin.init(
         primaryKey: true,
         autoIncrement: true,
       },
-      auth_id: {
+      social_id: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -23,8 +23,8 @@ SocialLogin.init(
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
-      auth_type: {
-        type: DataTypes.STRING,
+      type: {
+        type: DataTypes.ENUM('KAKAO', 'GOOGLE', 'APPLE'),
         allowNull: false,
       },
       name: {

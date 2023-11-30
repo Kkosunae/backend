@@ -8,12 +8,33 @@ const {User, SocialLogin} = models;
 
 //* 소셜 id로 회원가입 여부 확인
 export const userService = {
-  isMember: async (authId) => {
+  isSocialMemberForLogin: async (type, socialId) => {
     try {
-    // id가 authId이고 user_id가 null이 아닌 경우
+    // 소셜로그인 타입이 일치 + user_id가 null이 아닌 경우 중에 social_id가 일치하는 경우
       const socialLogin = await SocialLogin.findOne({
         where: {
-          auth_id: authId,
+          social_id: socialId,
+          type,
+          user_id: {
+            [Op.ne]: null,
+          },
+        },
+      });
+
+      if (socialLogin) {
+        return socialLogin.id;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  isSocialMemberForJoin: async (socialLoginId) => {
+    try {
+      const socialLogin = await SocialLogin.findOne({
+        where: {
+          id: socialLoginId,
           user_id: {
             [Op.ne]: null,
           },
@@ -45,112 +66,27 @@ export const userService = {
       console.error(error);
     }
   },
-  createSocialLogin: async (type, data) => {
+  createSocialLogin: async (type, userData) => {
     try {
-      const authId = data.id;
-      if (type == 'kakao') {
-        const socialLogin = await SocialLogin.create({
-          auth_type: type,
-          auth_id: authId,
-          name: data.properties.nickname,
-          email: data.kakao_account.email,
-          user_id: null,
-        });
-        return socialLogin.id;
-      } else if (type == 'google') {
-        const socialLogin = await SocialLogin.create({
-          auth_type: type,
-          auth_id: authId,
-          name: data.name,
-          email: data.email,
-          user_id: null,
-        });
-      } else if (type == 'apple') {
-        const socialLogin = await SocialLogin.create({
-          auth_type: type,
-          auth_id: authId,
-          name: data.name,
-          email: data.email,
-          user_id: null,
-        });
-        return socialLogin.id;
-      }
+      const socialLogin = await SocialLogin.create({
+        type,
+        social_id: userData.socialId,
+        name: userData.name,
+        email: userData.email,
+      });
+
+      return socialLogin.id;
     } catch (error) {
       console.error(error);
     }
   },
-  signInKakao: async (kakaoToken) => {
-    let result = {};
-
-    try {
-      result = await axios.get('https://kapi.kakao.com/v2/user/me', {
-        headers: {
-          Authorization: `Bearer ${kakaoToken}`,
-        },
-      });
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        const err = new Error('유효하지 않은 토큰입니다.');
-        err.response = error.response;
-        throw err;
-      }
-      const err = new Error('카카오 로그인에 실패했습니다.');
-      err.response = error.response;
-      throw err;
-    }
-    const kakaoData = result.data;
-    return kakaoData;
-  },
-  signInGoogle: async (googleToken) => {
-    let result = {};
-
-    try {
-      result = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
-        headers: {
-          Authorization: `Bearer ${googleToken}`,
-        },
-      });
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        const err = new Error('유효하지 않은 토큰입니다.');
-        err.response = error.response;
-        throw err;
-      }
-      const err = new Error('구글 로그인에 실패했습니다.');
-      err.response = error.response;
-      throw err;
-    }
-    const googleData = result.data;
-    return googleData;
-  },
-  signInApple: async (appleToken) => {
-    try {
-      const response = await axios.get('https://appleid.apple.com/auth/userinfo', {
-        headers: {
-          Authorization: `Bearer ${appleToken}`,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      if (error.response && error.response.status === 401) {
-        const err = new Error('유효하지 않은 토큰입니다.');
-        err.response = error.response;
-        throw err;
-      }
-      const err = new Error('애플 로그인에 실패했습니다.');
-      err.response = error.response;
-      throw err;
-    }
-
-    const appleData = response.data;
-    return appleData;
-  },
-  userJoin: async (authId, birthday, gender) => {
+  join: async (socialLoginId, userData) => {
     try {
     // user 테이블에 auth_id 컬럼 추가
       const newUser = await User.create({
-        birthday: birthday,
-        gender: gender,
+        name: userData.name,
+        birthday: userData.birthday,
+        gender: userData.gender,
       });
 
       // social_login 테이블의 user_id 컬럼에 user.id 추가하고 type 리턴
@@ -158,7 +94,7 @@ export const userService = {
         user_id: newUser.id,
       }, {
         where: {
-          id: authId,
+          id: socialLoginId,
         },
       });
       return newUser.id;
