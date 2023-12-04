@@ -1,12 +1,12 @@
 'use strict';
 
-import postService from '../services/post.js';
+import footprintService from '../../services/map/footprint.js';
 import config from 'config';
 
 // import {success, fail} from '../util/responseStatus.js';
 
-const postController = {
-  createPost: async (req, res) => {
+const footprintController = {
+  createFootprint: async (req, res) => {
     try {
       const userId = req.userId;
 
@@ -17,7 +17,7 @@ const postController = {
       const images = req.files;
       const imageUrls = images.map((image) => image.location);
 
-      const newPost = await postService.createPost({userId, content, latitude, longitude, imageUrls});
+      const newFootprint = await footprintService.createFootprint(userId, content, latitude, longitude, imageUrls);
 
       return res.status(201).json({message: '글 작성에 성공했습니다.'});
     } catch (error) {
@@ -25,11 +25,11 @@ const postController = {
       return res.status(500).json({message: '글 작성 중 오류가 발생했습니다.'});
     }
   },
-  getPost: async (req, res) => {
+  getFootprint: async (req, res) => {
     try {
       const {latitude, longitude} = req.body;
-      const posts = await postService.getPost(latitude, longitude);
-      return res.status(200).json({posts});
+      const footprints = await footprintService.getFootprint(latitude, longitude);
+      return res.status(200).json({footprints});
     } catch (error) {
       console.error(error);
       return res.status(500).json({message: '게시글 조회 중 오류가 발생했습니다.'});
@@ -38,4 +38,4 @@ const postController = {
 };
 
 
-export default postController;
+export default footprintController;

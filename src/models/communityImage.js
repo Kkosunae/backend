@@ -3,9 +3,9 @@
 import {DataTypes, Model} from 'sequelize';
 import {sequelize} from '../../loaders/sequelize.js';
 
-class CommunityPostImage extends Model {}
+class CommunityImage extends Model {}
 
-CommunityPostImage.init(
+CommunityImage.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -24,9 +24,9 @@ CommunityPostImage.init(
     },
     {
       sequelize,
-      modelName: 'CommunityPostImage',
-      tableName: 'community_post_image',
+      modelName: 'CommunityImage',
+      tableName: 'community_image',
     },
 );
 
-export default CommunityPostImage;
+export default CommunityImage;

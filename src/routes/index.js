@@ -1,6 +1,6 @@
 import express from 'express';
-import userRouter from './user.js';
-import mapRouter from './map.js';
+import userRouter from './user/index.js';
+import mapRouter from './map/index.js';
 import walkRouter from './walk.js';
 import communityRouter from './community.js';
 

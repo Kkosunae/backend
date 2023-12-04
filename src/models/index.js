@@ -4,26 +4,29 @@ import User from './user.js';
 import SocialLogin from './socialLogin.js';
 import Follow from './follow.js';
 import FollowHistory from './followHistory.js';
-import Post from './post.js';
-import PostImage from './postImage.js';
+import Footprint from './footprint.js';
+import FootprintImage from './footprintImage.js';
+import FootprintComment from './footprintComment.js';
+
 import Map from './map.js';
 import Walk from './walk.js';
-import CommunityPost from './communityPost.js';
-import CommunityPostImage from './communityPostImage.js';
-import CommunityPostComment from './communityPostComment.js';
+import Community from './community.js';
+import CommunityImage from './communityImage.js';
+import CommunityComment from './communityComment.js';
 
 const models = {
   User,
   SocialLogin,
   Follow,
   FollowHistory,
-  Post,
-  PostImage,
+  Footprint,
+  FootprintImage,
+  FootprintComment,
   Map,
   Walk,
-  CommunityPost,
-  CommunityPostImage,
-  CommunityPostComment,
+  Community,
+  CommunityImage,
+  CommunityComment,
 };
 
 SocialLogin.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
@@ -41,23 +44,26 @@ User.hasMany(FollowHistory, {foreignKey: 'follower_id', as: 'follower'});
 User.hasMany(FollowHistory, {foreignKey: 'following_id', as: 'following'});
 Follow.hasMany(FollowHistory, {foreignKey: 'follow_id', as: 'follow'});
 
-Post.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
-User.hasMany(Post, {foreignKey: 'user_id', as: 'post'});
+Footprint.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
+User.hasMany(Footprint, {foreignKey: 'user_id', as: 'footprint'});
 
-PostImage.belongsTo(Post, {foreignKey: 'post_id', as: 'post'});
-Post.hasMany(PostImage, {foreignKey: 'post_id', as: 'postImage'});
+FootprintImage.belongsTo(Footprint, {foreignKey: 'footprint_id', as: 'footprint'});
+Footprint.hasMany(FootprintImage, {foreignKey: 'footprint_id', as: 'footprintImage'});
+
+FootprintComment.belongsTo(Footprint, {foreignKey: 'footprint_id', as: 'footprint'});
+Footprint.hasMany(FootprintComment, {foreignKey: 'footprint_id', as: 'footprintComment'});
 
 Walk.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
 User.hasMany(Walk, {foreignKey: 'user_id', as: 'walk'});
 
-CommunityPost.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
-User.hasMany(CommunityPost, {foreignKey: 'user_id', as: 'communityPost'});
+Community.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
+User.hasMany(Community, {foreignKey: 'user_id', as: 'community'});
 
-CommunityPostImage.belongsTo(CommunityPost, {foreignKey: 'community_post_id', as: 'communityPost'});
-CommunityPost.hasMany(CommunityPostImage, {foreignKey: 'community_post_id', as: 'communityPostImage'});
+CommunityImage.belongsTo(Community, {foreignKey: 'community_id', as: 'community'});
+Community.hasMany(CommunityImage, {foreignKey: 'community_id', as: 'communityImage'});
 
-CommunityPostComment.belongsTo(CommunityPost, {foreignKey: 'community_post_id', as: 'communityPost'});
-CommunityPost.hasMany(CommunityPostComment, {foreignKey: 'community_post_id', as: 'communityPostComment'});
+CommunityComment.belongsTo(Community, {foreignKey: 'community_id', as: 'community'});
+Community.hasMany(CommunityComment, {foreignKey: 'community_id', as: 'communityComment'});
 
 export {models};
 

@@ -3,17 +3,17 @@
 import {DataTypes, Model} from 'sequelize';
 import {sequelize} from '../../loaders/sequelize.js';
 
-class PostImage extends Model {}
+class CommunityComment extends Model {}
 
-PostImage.init(
+CommunityComment.init(
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      url: {
-        type: DataTypes.STRING, // 이미지 URL을 저장하는 필드
+      content: {
+        type: DataTypes.STRING(200), // 200자까지 입력 가능
         allowNull: false,
       },
       isDeleted: {
@@ -24,9 +24,9 @@ PostImage.init(
     },
     {
       sequelize,
-      modelName: 'PostImage',
-      tableName: 'post_image',
+      modelName: 'CommunityComment', // 모델 이름
+      tableName: 'community_comment', // 테이블 이름
     },
 );
 
-export default PostImage;
+export default CommunityComment;

@@ -3,17 +3,25 @@
 import {DataTypes, Model} from 'sequelize';
 import {sequelize} from '../../loaders/sequelize.js';
 
-class CommunityPost extends Model {}
+class Footprint extends Model {}
 
-CommunityPost.init(
+Footprint.init(
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
+      latitude: {
+        type: DataTypes.FLOAT, // 소숫점 6자리까지
+        allowNull: false,
+      },
+      longitude: {
+        type: DataTypes.FLOAT, // 소숫점 6자리까지
+        allowNull: false,
+      },
       content: {
-        type: DataTypes.STRING(1000), // 10000자까지 입력 가능
+        type: DataTypes.STRING(500), // 2200자까지 입력 가능
         allowNull: false,
       },
       isDeleted: {
@@ -24,9 +32,9 @@ CommunityPost.init(
     },
     {
       sequelize,
-      modelName: 'CommunityPost', // 모델 이름
-      tableName: 'community_post', // 테이블 이름
+      modelName: 'Footprint', // 모델 이름
+      tableName: 'footprint', // 테이블 이름
     },
 );
 
-export default CommunityPost;
+export default Footprint;

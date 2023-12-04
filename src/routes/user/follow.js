@@ -1,8 +1,8 @@
 'use strict';
 
 import express from 'express';
-import userController from '../controllers/user/index.js';
-import followController from '../controllers/user/follow.js';
+import userController from '../../controllers/user/index.js';
+import followController from '../../controllers/user/follow.js';
 import config from 'config';
 import passport from 'passport';
 

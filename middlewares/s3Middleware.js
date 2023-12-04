@@ -4,7 +4,7 @@ import {s3} from '../src/services/aws.js';
 import config from 'config';
 import moment from 'moment';
 
-const mapPostFileFilter = (req, file, cb) => {
+const footprintFileFilter = (req, file, cb) => {
   const {content} = req.body;
   if (content.length > 500) {
     cb(new Error('게시글은 500자를 초과할 수 없습니다.'), false);
@@ -13,7 +13,7 @@ const mapPostFileFilter = (req, file, cb) => {
   }
 };
 
-const mapPostUpload = multer({
+const footprintUpload = multer({
   storage: multerS3({
     s3: s3,
     bucket: config.get('s3.bucket'),
@@ -30,11 +30,11 @@ const mapPostUpload = multer({
       const count = ++req.fileCount;
       const fileName = `${formattedTime}_${req.userId}_${count}_${file.originalname}`;
 
-      const filePath = `images/map/post/${formattedDate}/${fileName}`;
+      const filePath = `images/footprint/${formattedDate}/${fileName}`;
       cb(null, filePath);
     },
   }),
-  fileFilter: mapPostFileFilter,
+  fileFilter: footprintFileFilter,
 });
 
 
@@ -64,7 +64,7 @@ const communityPostUpload = multer({
       const count = ++req.fileCount;
       const fileName = `${formattedTime}_${req.userId}_${count}_${file.originalname}`;
 
-      const filePath = `images/community/post/${formattedDate}/${fileName}`;
+      const filePath = `images/community/${formattedDate}/${fileName}`;
       cb(null, filePath);
     },
   }),
@@ -72,4 +72,4 @@ const communityPostUpload = multer({
 });
 
 
-export {mapPostUpload, communityPostUpload};
+export {footprintUpload, communityPostUpload};

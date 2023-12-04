@@ -1,15 +1,15 @@
 'use strict';
 
 import express from 'express';
-import mapController from '../controllers/map.js';
+import mapController from '../../controllers/map/index.js';
 import config from 'config';
 import passport from 'passport';
-import postRouter from './map/post.js';
+import footprint from './footprint.js';
 
 
 const router = express.Router();
 
-router.use('/post', postRouter);
+router.use('/footprint', footprint);
 router.post('/', mapController.getPlaceInfo);
 
 export default router;
