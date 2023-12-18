@@ -14,7 +14,7 @@ const authMiddleware = (req, res, next) => {
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
         // 토큰이 있는데 토큰이 만료된 경우
-        res.status(401).json({error: '토큰이 만료되었습니다.'});
+        return res.status(401).json({error: '토큰이 만료되었습니다.'});
       }
       req.userId = null;
     }

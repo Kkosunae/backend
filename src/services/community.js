@@ -2,13 +2,13 @@ import {models} from '../models/index.js';
 import Sequelize from 'sequelize';
 const {Op} = Sequelize;
 
-const {CommunityPost, CommunityPostImage, CommunityPostComment, User} = models;
+const {Community, CommunityImage, CommunityComment, User} = models;
 
 export const communityService = {
   // 게시글을 작성한 유저의 id 가져오기
   getUserId: async (postId) => {
     try {
-      const post = await CommunityPost.findOne({
+      const post = await Community.findOne({
         where: {
           id: postId,
         },
@@ -21,7 +21,7 @@ export const communityService = {
   // 댓글을 작성한 유저의 id 가져오기
   getCommentUserId: async (commentId) => {
     try {
-      const comment = await CommunityPostComment.findOne({
+      const comment = await CommunityComment.findOne({
         where: {
           id: commentId,
         },
@@ -31,10 +31,36 @@ export const communityService = {
       throw error;
     }
   },
+  isValidPost: async (postId) => {
+    try {
+      const post = await Community.findOne({
+        where: {
+          id: postId,
+          isDeleted: false,
+        },
+      });
+      return post;
+    } catch (error) {
+      throw error;
+    }
+  },
+  isValidComment: async (commentId) => {
+    try {
+      const comment = await CommunityComment.findOne({
+        where: {
+          id: commentId,
+          isDeleted: false,
+        },
+      });
+      return comment;
+    } catch (error) {
+      throw error;
+    }
+  },
   createPost: async ({userId, content, imageUrls}) => {
     try {
       // 게시물 생성
-      const newCommunityPost = await CommunityPost.create({
+      const newCommunity = await Community.create({
         content,
         user_id: userId,
         isDeleted: false,
@@ -44,13 +70,13 @@ export const communityService = {
       if (imageUrls && imageUrls.length > 0) {
         const imageRecords = imageUrls.map((url) => ({
           url,
-          community_post_id: newCommunityPost.id, // 게시물과 이미지 연결
+          community_id: newCommunity.id, // 게시물과 이미지 연결
         }));
 
-        await CommunityPostImage.bulkCreate(imageRecords);
+        await CommunityImage.bulkCreate(imageRecords);
       }
 
-      return newCommunityPost;
+      return newCommunity;
     } catch (error) {
       throw error;
     }
@@ -68,12 +94,12 @@ export const communityService = {
       }
 
       const offset = (page - 1) * limit;
-      const posts = await CommunityPost.findAll({
+      const posts = await Community.findAll({
         include: [
           {
-            model: CommunityPostImage,
+            model: CommunityImage,
             attributes: ['url'],
-            as: 'communityPostImage',
+            as: 'communityImage',
           },
           {
             model: User,
@@ -95,12 +121,12 @@ export const communityService = {
   },
   getPostDetail: async (postId) => {
     try {
-      const post = await CommunityPost.findOne({
+      const post = await Community.findOne({
         include: [
           {
-            model: CommunityPostImage,
+            model: CommunityImage,
             attributes: ['url'],
-            as: 'communityPostImage',
+            as: 'communityImage',
           },
           {
             model: User,
@@ -120,7 +146,7 @@ export const communityService = {
   },
   updatePost: async (postId, content) => {
     try {
-      await CommunityPost.update(
+      await Community.update(
           {
             content,
           },
@@ -136,7 +162,7 @@ export const communityService = {
   },
   deletePost: async (postId) => {
     try {
-      await CommunityPost.update(
+      await Community.update(
           {
             isDeleted: true,
           },
@@ -150,14 +176,25 @@ export const communityService = {
       throw error;
     }
   },
-  searchPost: async (keyword) => {
+  searchPost: async (keyword, page = 1, limit = 5) => {
     try {
-      const posts = await CommunityPost.findAll({
+      page = parseInt(page);
+      limit = parseInt(limit);
+
+      if (isNaN(page)) {
+        page = 1;
+      }
+      if (isNaN(limit)) {
+        limit = 5;
+      }
+
+      const offset = (page - 1) * limit;
+      const posts = await Community.findAll({
         include: [
           {
-            model: CommunityPostImage,
+            model: CommunityImage,
             attributes: ['url'],
-            as: 'communityPostImage',
+            as: 'communityImage',
           },
           {
             model: User,
@@ -169,27 +206,65 @@ export const communityService = {
           content: {
             [Op.like]: `%${keyword}%`,
           },
+          isDeleted: false,
         },
+        order: [['createdAt', 'DESC']],
+        offset: offset,
+        limit: limit,
       });
       return posts;
     } catch (error) {
       throw error;
     }
   },
+  getComment: async (postId, page = 1, limit = 5) => {
+    try {
+      page = parseInt(page);
+      limit = parseInt(limit);
+
+      if (isNaN(page)) {
+        page = 1;
+      }
+      if (isNaN(limit)) {
+        limit = 5;
+      }
+
+      const offset = (page - 1) * limit;
+      const comments = await CommunityComment.findAll({
+        include: [
+          {
+            model: User,
+            attributes: ['name'],
+            as: 'user',
+          },
+        ],
+        where: {
+          community_id: postId,
+          isDeleted: false,
+        },
+        order: [['createdAt', 'DESC']],
+        offset: offset,
+        limit: limit,
+      });
+      return comments;
+    } catch (error) {
+      throw error;
+    }
+  },
   postComment: async ({userId, postId, content}) => {
     try {
-      await CommunityPostComment.create({
+      await CommunityComment.create({
         user_id: userId,
-        community_post_id: postId,
+        community_id: postId,
         content,
       });
     } catch (error) {
       throw error;
     }
   },
-  deleteComment: async (postId) => {
+  deleteComment: async (commentId) => {
     try {
-      await CommunityPostComment.update(
+      await CommunityComment.update(
           {
             isDeleted: true,
           },

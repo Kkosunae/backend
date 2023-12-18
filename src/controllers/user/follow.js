@@ -10,6 +10,12 @@ const followController = {
       return res.status(401).json({error: 'Unauthorized'});
     }
     const userId = req.params.userId;
+
+    // userId 숫자인지 검증
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({error: '필수 정보가 누락되었습니다.'});
+    }
+
     try {
       const followList = await followService.getFollowingList(userId);
       return res.status(200).json({
@@ -43,7 +49,7 @@ const followController = {
     }
 
     if (!req.body.userId) {
-      return res.status(400).json({error: '팔로우할 유저가 전달되지 않았습니다.'});
+      return res.status(400).json({error: '필수 정보가 누락되었습니다.'});
     }
 
     const followerId = req.userId;
@@ -66,7 +72,7 @@ const followController = {
         message: '성공적으로 팔로우 하였습니다.',
       });
     } catch (error) {
-      res.status(500).json({error: '팔로우 실패하였습니다.'});
+      return res.status(500).json({error: '팔로우 실패하였습니다.'});
     }
   },
 
@@ -76,7 +82,7 @@ const followController = {
     }
 
     if (!req.body.userId) {
-      return res.status(400).json({error: '팔로우할 유저가 전달되지 않았습니다.'});
+      return res.status(400).json({error: '필수 정보가 누락되었습니다.'});
     }
 
     const followerId = req.userId;
@@ -98,7 +104,7 @@ const followController = {
         message: '성공적으로 언팔로우 하였습니다.',
       });
     } catch (error) {
-      res.status(500).json({error: '언팔로우에 실패하였습니다.'});
+      return res.status(500).json({error: '언팔로우에 실패하였습니다.'});
     }
   },
 };

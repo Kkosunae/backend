@@ -23,7 +23,7 @@ export const followService = {
     try {
       const followList = await Follow.findAll({
         where: {
-          following_id: userId,
+          follower_id: userId,
         },
         attributes: ['id', 'following_id'],
       });
@@ -36,9 +36,9 @@ export const followService = {
     try {
       const followList = await Follow.findAll({
         where: {
-          follower_id: userId,
+          following_id: userId,
         },
-        attributes: ['id', 'following_id'],
+        attributes: ['id', 'follower_id'],
       });
       return followList;
     } catch (error) {

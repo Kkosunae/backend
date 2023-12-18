@@ -4,17 +4,18 @@ import sequelize from 'sequelize';
 
 const {Walk} = models;
 
+const calculateDuration = (startTime, endTime) => {
+  if (!startTime || !endTime) {
+    return null;
+  }
+
+  const durationInMilliseconds = endTime - startTime;
+  const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
+
+  return durationInSeconds;
+};
+
 export const walkService = {
-  isWalking: async (userId) => {
-    try {
-      const walk = await Walk.findOne(
-          {where: {user_id: userId, isWalking: true}},
-      );
-      return walk;
-    } catch (error) {
-      return false;
-    }
-  },
   isValidWalk: async (userId, walkId) => {
     try {
       const walk = await Walk.findOne(
@@ -62,16 +63,6 @@ export const walkService = {
       console.error(error);
       throw new Error('Error ending walk');
     }
-  },
-  calculateDuration: (startTime, endTime) => {
-    if (!startTime || !endTime) {
-      return null;
-    }
-
-    const durationInMilliseconds = endTime - startTime;
-    const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
-
-    return durationInSeconds;
   },
   getTotalStatistics: async () => {
     try {
@@ -203,7 +194,7 @@ export const walkService = {
         order: [['startTime', 'DESC']],
         limit: 1,
       });
-      recentWalk.dataValues.duration = this.calculateDuration(recentWalk.startTime, recentWalk.endTime);
+      recentWalk.dataValues.duration = calculateDuration(recentWalk.startTime, recentWalk.endTime);
 
       return recentWalk;
     } catch (error) {

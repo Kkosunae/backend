@@ -5,6 +5,7 @@ import userService from '../../services/user/index.js';
 
 const userController = {
   socialLogin: async (req, res, socialType) => {
+    console.log(req.body);
     const {socialId, name, email} = req.body;
     let type = 'register';
 
@@ -17,13 +18,13 @@ const userController = {
 
     if (socialLoginId) {
       type = 'login';
-      res.status(200).json({
+      return res.status(200).json({
         'type': type,
         'jwt': userService.getJwt(socialLoginId),
       });
     } else {
       const newSocialLoginId = await userService.createSocialLogin(socialType, {socialId, name, email});
-      res.status(200).json({
+      return res.status(200).json({
         'type': type,
         'socialLoginId': newSocialLoginId,
       });
@@ -34,8 +35,15 @@ const userController = {
 
     // 필수 파라미터
     if (!socialLoginId) {
-      return res.status(400).json({error: 'socialLoginId 가 없습니다.'});
+      return res.status(400).json({error: '필수 정보가 누락되었습니다.'});
     }
+
+    // YYYYMMDD 형식인지 확인
+    if (birthday && !isValidBirthday(birthday)) {
+      return res.status(400).json({error: '생년월일은 YYYYMMDD 형식으로 입력해주세요.'});
+    }
+
+    if (gender && !(gender == 'male' || gender == 'female')) gender = 'male';
 
     // 가입한 회원인지 확인
     const userId = await userService.isSocialMemberForJoin(socialLoginId);
@@ -47,7 +55,7 @@ const userController = {
       const newUserId = await userService.join(socialLoginId, {name, birthday, gender});
       const newJwt = userService.getJwt(newUserId);
 
-      res.status(200).json({
+      return res.status(200).json({
         'userId': newUserId,
         'jwt': newJwt,
       });
@@ -55,6 +63,11 @@ const userController = {
       return res.status(500).json({error: 'Failed to join.'});
     }
   },
+};
+
+const isValidBirthday = (birthday) => {
+  const regex = /^[0-9]{8}$/;
+  return regex.test(birthday);
 };
 
 

@@ -53,6 +53,9 @@ Footprint.hasMany(FootprintImage, {foreignKey: 'footprint_id', as: 'footprintIma
 FootprintComment.belongsTo(Footprint, {foreignKey: 'footprint_id', as: 'footprint'});
 Footprint.hasMany(FootprintComment, {foreignKey: 'footprint_id', as: 'footprintComment'});
 
+FootprintComment.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
+User.hasMany(FootprintComment, {foreignKey: 'user_id', as: 'footprintComment'});
+
 Walk.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
 User.hasMany(Walk, {foreignKey: 'user_id', as: 'walk'});
 
@@ -64,6 +67,9 @@ Community.hasMany(CommunityImage, {foreignKey: 'community_id', as: 'communityIma
 
 CommunityComment.belongsTo(Community, {foreignKey: 'community_id', as: 'community'});
 Community.hasMany(CommunityComment, {foreignKey: 'community_id', as: 'communityComment'});
+
+CommunityComment.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
+User.hasMany(CommunityComment, {foreignKey: 'user_id', as: 'communityComment'});
 
 export {models};
 

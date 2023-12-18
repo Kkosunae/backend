@@ -26,7 +26,7 @@ const walkController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send('산책 시작 중 오류가 발생했습니다.');
+      return res.status(500).json({error: '산책 시작 중 오류가 발생했습니다.'});
     }
   },
   endWalk: async (req, res) => {
@@ -53,7 +53,7 @@ const walkController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send('산책 종료 중 오류가 발생했습니다.');
+      return res.status(500).send('산책 종료 중 오류가 발생했습니다.');
     }
   },
   getStatistics: async (req, res) => {
@@ -78,7 +78,7 @@ const walkController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send('통계 조회 중 오류가 발생했습니다.');
+      return res.status(500).send('통계 조회 중 오류가 발생했습니다.');
     }
   },
 };

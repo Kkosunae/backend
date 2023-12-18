@@ -21,6 +21,6 @@ router.post('/googleLogin', (req, res) => userController.socialLogin(req, res, G
 router.post('/appleLogin', (req, res) => userController.socialLogin(req, res, APPLE));
 
 // 회원가입
-router.post('', userController.join);
+router.post('/', userController.join);
 
 export default router;
