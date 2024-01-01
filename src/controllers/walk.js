@@ -15,7 +15,7 @@ const walkController = {
 
       const userId = req.userId;
       const {latitude, longitude} = req.body;
-      const isWalking = await walkService.isWalking(userId);
+      const isWalking = await walkService.isValidWalk(userId);
       if (isWalking) {
         return res.status(400).json({error: '이미 산책 중입니다.'});
       }
