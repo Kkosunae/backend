@@ -30,12 +30,12 @@ jobs:
                 "state": "dev",
                 "timezone": "Asia/Seoul"
             },
-            "mysql": {
-                "host": "${{ secrets.MYSQL_HOST }}",
-                "username": "${{ secrets.MYSQL_USERNAME }}",
-                "password": "${{ secrets.MYSQL_PASSWORD }}",
-                "database": "kkosunae",
-                "dialect": "mysql",
+            "postgres": {
+                "host": "${{ secrets.POSTGRESQL_HOST }}",
+                "username": "${{ secrets.POSTGRESQL_USERNAME }}",
+                "password": "${{ secrets.POSTGRESQL_PASSWORD }}",
+                "database": "postgres",
+                "dialect": "postgres",
                 "timezone": "+09:00"
             },
             "jwt": {
