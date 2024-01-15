@@ -86,8 +86,7 @@ export const footprintService = {
   },
   getFootprint: async (latitude, longitude) => {
     try {
-      const radius = 0.3; // 300m를 킬로미터로 환산
-      const earthRadius = 6371; // 지구 반지름 (킬로미터)
+      const radius = 300; // 300m
 
       const footprints = await Footprint.findAll({
         include: [
@@ -97,18 +96,15 @@ export const footprintService = {
             as: 'footprintImage',
           },
         ],
-        where: Sequelize.where(
-            Sequelize.fn(
-                'acos',
-                Sequelize.literal(
-                    `sin(RADIANS(${latitude})) * sin(RADIANS(latitude)) + cos(RADIANS(${latitude})) * cos(RADIANS(latitude)) * cos(RADIANS(${longitude} - longitude))`,
-                ),
-            ),
-            {
-              [Op.lte]: radius / earthRadius,
-            },
+        where: Sequelize.literal(
+            `ST_DWithin(
+            ST_MakePoint(${longitude}, ${latitude})::geography,
+            ST_MakePoint(longitude, latitude)::geography,
+            ${radius}
+          )`,
         ),
       });
+
       return footprints;
     } catch (error) {
       throw error;
