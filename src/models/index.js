@@ -9,6 +9,8 @@ import FootprintImage from './footprintImage.js';
 import FootprintComment from './footprintComment.js';
 
 import Map from './map.js';
+import MapComplain from './mapComplain.js';
+import MapReportNew from './mapReportNew.js';
 import Walk from './walk.js';
 import Community from './community.js';
 import CommunityImage from './communityImage.js';
@@ -23,6 +25,8 @@ const models = {
   FootprintImage,
   FootprintComment,
   Map,
+  MapComplain,
+  MapReportNew,
   Walk,
   Community,
   CommunityImage,
@@ -70,6 +74,9 @@ Community.hasMany(CommunityComment, {foreignKey: 'community_id', as: 'communityC
 
 CommunityComment.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
 User.hasMany(CommunityComment, {foreignKey: 'user_id', as: 'communityComment'});
+
+MapComplain.belongsTo(Map, {foreignKey: 'map_id', as: 'map'});
+Map.hasMany(MapComplain, {foreignKey: 'map_id', as: 'mapComplain'});
 
 export {models};
 
