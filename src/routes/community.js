@@ -40,4 +40,6 @@ router.get('/:postId/comment', communityController.getComment);
 router.post('/:postId/comment', communityController.postComment);
 router.delete('/:postId/comment/:commentId', communityController.deleteComment);
 
+router.post('/:postId/like', communityController.likePost);
+
 export default router;

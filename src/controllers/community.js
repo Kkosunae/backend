@@ -182,6 +182,28 @@ const communityController = {
       return res.status(500).json({error: '게시글 삭제 중 오류가 발생했습니다.'});
     }
   },
+  likePost: async (req, res) => {
+    try {
+      console.log('likePost');
+      const userId = req.userId;
+      const {postId} = req.params;
+
+      // 유효한 postId인지 확인
+      const post = await communityService.isValidPost(postId);
+      if (!post) {
+        return res.status(400).json({error: '유효하지 않은 게시글입니다.'});
+      }
+
+      const isLike = await communityService.like({userId, postId});
+      if (isLike) {
+        return res.status(200).json({message: '좋아요를 눌렀습니다.', method: 'like'});
+      }
+      return res.status(200).json({message: '좋아요를 취소했습니다.', method: 'unlike'});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({error: '좋아요 중 오류가 발생했습니다.'});
+    }
+  },
 };
 
 export default communityController;

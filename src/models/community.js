@@ -16,6 +16,11 @@ Community.init(
         type: DataTypes.STRING(1000), // 10000자까지 입력 가능
         allowNull: false,
       },
+      // 좋아요 하는 사람들의 id를 저장하는 list 칼럼
+      likes: {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        defaultValue: [],
+      },
       isDeleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false, // 기본값으로 삭제되지 않은 상태로 설정

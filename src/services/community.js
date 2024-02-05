@@ -278,6 +278,45 @@ export const communityService = {
       throw error;
     }
   },
+  // community 모델의 likes 에 user id 가 없으면 likes 칼럼에 userId 추가
+  // 있으면 likes 칼럼에서 userId 삭제
+  like: async (userId, postId) => {
+    try {
+      const post = await Community.findOne({
+        where: {
+          id: postId,
+        },
+      });
+
+      const likes = post.likes;
+      const index = likes.indexOf(userId);
+      let isLike = true;
+
+      if (index === -1) {
+        // 좋아요를 누른 상태가 아니라면
+        likes.push(userId);
+      } else {
+        // 좋아요를 누른 상태라면
+        likes.splice(index, 1);
+        isLike = false;
+      }
+
+      await Community.update(
+          {
+            likes,
+          },
+          {
+            where: {
+              id: postId,
+            },
+          },
+      );
+
+      return isLike;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default communityService;
