@@ -16,13 +16,16 @@ const handleS3UploadError = (err, req, res, next) => {
 router.post(
     '/',
     (req, res, next) => {
-    // 미들웨어 적용
-      footprintUpload.array('images', 1)(req, res, (err) => {
+      console.log('!!!!!!!!!!!!');
+      // 미들웨어 적용
+      footprintUpload.array('image', 1)(req, res, (err) => {
         if (err) {
-        // 업로드 중 에러 발생 시, 에러 핸들링 미들웨어로 이동
+          console.log(err);
+          // 업로드 중 에러 발생 시, 에러 핸들링 미들웨어로 이동
           handleS3UploadError(err, req, res, next);
         } else {
         // 업로드 성공 시, 다음 미들웨어로 이동
+          console.log('????????');
           next();
         }
       });

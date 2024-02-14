@@ -28,6 +28,10 @@ Map.init(
         type: DataTypes.FLOAT, // 소숫점 6자리까지
         allowNull: true,
       },
+      city: {
+        type: DataTypes.STRING(10), // 2200자까지 입력 가능
+        allowNull: true,
+      },
       gu: {
         type: DataTypes.STRING(10), // 2200자까지 입력 가능
         allowNull: true,

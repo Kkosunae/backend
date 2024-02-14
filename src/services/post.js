@@ -45,8 +45,8 @@ export const postService = {
         ],
         where: Sequelize.literal(
             `ST_DWithin(
-            geom, 
-            ST_MakePoint(${longitude}, ${latitude})::geography, 
+            ST_MakePoint(longitude, latitude)::geography,
+            ST_MakePoint(${longitude}, ${latitude})::geography,
             ${radius}
           )`,
         ),

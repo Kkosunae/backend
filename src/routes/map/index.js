@@ -10,6 +10,6 @@ import footprint from './footprint.js';
 const router = express.Router();
 
 router.use('/footprint', footprint);
-router.post('/', mapController.getPlaceInfo);
+router.post('/', mapController.getPlacesAndFootprintsInfo);
 
 export default router;
