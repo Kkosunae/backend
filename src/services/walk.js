@@ -16,6 +16,16 @@ const calculateDuration = (startTime, endTime) => {
 };
 
 export const walkService = {
+  isUserWalking: async (userId) => {
+    try {
+      const walk = await Walk.findOne(
+          {where: {user_id: userId, isWalking: true}},
+      );
+      return walk;
+    } catch (error) {
+      return false;
+    }
+  },
   isValidWalk: async (userId, walkId) => {
     try {
       const walk = await Walk.findOne(
@@ -69,22 +79,24 @@ export const walkService = {
       const statistics = await Walk.findAll({
         attributes: [
           [sequelize.fn('COUNT', sequelize.col('id')), 'walkCount'],
-          [sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime))')), 'averageDuration'],
-          [sequelize.fn('SUM', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime))')), 'totalDuration'],
-          [sequelize.fn('MAX', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime))')), 'maxDuration'],
           [
-            sequelize.fn(
-                'TIME_FORMAT',
-                sequelize.fn('SEC_TO_TIME', sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(startTime)')))
-                , '%H:%i:%s',
-            ),
-            'averageStartTime',
+            sequelize.fn('AVG', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
+            'averageDuration',
+          ],
+          [
+            sequelize.fn('SUM', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
+            'totalDuration',
+          ],
+          [
+            sequelize.fn('MAX', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
+            'maxDuration',
           ],
         ],
         where: {
           endTime: {
             [sequelize.Op.not]: null,
           },
+          isWalking: false,
         },
         raw: true,
       });
@@ -100,20 +112,16 @@ export const walkService = {
       const statistics = await Walk.findAll({
         attributes: [
           [sequelize.fn('COUNT', sequelize.col('id')), 'walkCount'],
-          [sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime))')), 'averageDuration'],
           [
-            sequelize.fn(
-                'TIME_FORMAT',
-                sequelize.fn('SEC_TO_TIME', sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(startTime)')))
-                , '%H:%i:%s',
-            ),
-            'averageStartTime',
+            sequelize.fn('AVG', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
+            'averageDuration',
           ],
         ],
         where: {
           endTime: {
             [Op.not]: null,
           },
+          isWalking: false,
         },
         group: [sequelize.fn('DATE', sequelize.col('startTime'))],
         raw: true,
@@ -130,21 +138,18 @@ export const walkService = {
       const statistics = await Walk.findAll({
         attributes: [
           [sequelize.fn('COUNT', sequelize.col('id')), 'walkCount'],
-          [sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime))')), 'averageDuration'],
           [
-            sequelize.fn(
-                'TIME_FORMAT',
-                sequelize.fn('SEC_TO_TIME', sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(startTime)')))
-                , '%H:%i:%s',
-            ),
-            'averageStartTime',
-          ]],
+            sequelize.fn('AVG', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
+            'averageDuration',
+          ],
+        ],
         where: {
           endTime: {
             [Op.not]: null,
           },
+          isWalking: false,
         },
-        group: [sequelize.fn('WEEK', sequelize.col('startTime'))],
+        group: [sequelize.fn('DATE_TRUNC', 'week', sequelize.col('startTime'))],
         raw: true,
       });
 
@@ -159,21 +164,18 @@ export const walkService = {
       const statistics = await Walk.findAll({
         attributes: [
           [sequelize.fn('COUNT', sequelize.col('id')), 'walkCount'],
-          [sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(TIMEDIFF(endTime, startTime))')), 'averageDuration'],
           [
-            sequelize.fn(
-                'TIME_FORMAT',
-                sequelize.fn('SEC_TO_TIME', sequelize.fn('AVG', sequelize.literal('TIME_TO_SEC(startTime)')))
-                , '%H:%i:%s',
-            ),
-            'averageStartTime',
-          ]],
+            sequelize.fn('AVG', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
+            'averageDuration',
+          ],
+        ],
         where: {
           endTime: {
             [Op.not]: null,
           },
+          isWalking: false,
         },
-        group: [sequelize.fn('MONTH', sequelize.col('startTime'))],
+        group: [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('startTime'))],
         raw: true,
       });
 
@@ -190,6 +192,7 @@ export const walkService = {
           endTime: {
             [Op.not]: null,
           },
+          isWalking: false,
         },
         order: [['startTime', 'DESC']],
         limit: 1,

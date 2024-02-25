@@ -16,7 +16,6 @@ const handleS3UploadError = (err, req, res, next) => {
 router.post(
     '/',
     (req, res, next) => {
-      console.log('!!!!!!!!!!!!');
       // 미들웨어 적용
       footprintUpload.array('image', 1)(req, res, (err) => {
         if (err) {
@@ -25,7 +24,6 @@ router.post(
           handleS3UploadError(err, req, res, next);
         } else {
         // 업로드 성공 시, 다음 미들웨어로 이동
-          console.log('????????');
           next();
         }
       });

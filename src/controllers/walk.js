@@ -15,8 +15,8 @@ const walkController = {
 
       const userId = req.userId;
       const {latitude, longitude} = req.body;
-      const isWalking = await walkService.isValidWalk(userId);
-      if (isWalking) {
+      const isUserWalking = await walkService.isUserWalking(userId);
+      if (isUserWalking) {
         return res.status(400).json({error: '이미 산책 중입니다.'});
       }
       const walk = await walkService.startWalk(userId, latitude, longitude);
@@ -38,7 +38,7 @@ const walkController = {
       const userId = req.userId;
       const {walkId, latitude, longitude} = req.body;
 
-      const isValidWalk = await walkService.isValidWalk(userId, walkId, latitude, longitude);
+      const isValidWalk = await walkService.isValidWalk(userId, walkId);
       if (!isValidWalk) {
         return res.status(400).json({error: '진행중인 산책이 아닙니다.'});
       }
