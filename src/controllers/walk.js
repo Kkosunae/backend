@@ -7,6 +7,23 @@ import config from 'config';
 // import {success, fail} from '../util/responseStatus.js';
 
 const walkController = {
+  walkStatus: async (req, res) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({error: 'Unauthorized'});
+      }
+
+      const userId = req.userId;
+      const isWalking = await walkService.isUserWalking(userId);
+      if (isWalking) {
+        return res.status(200).json(isWalking);
+      }
+      return res.status(204).json();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({error: '산책 상태 조회 중 오류가 발생했습니다.'});
+    }
+  },
   startWalk: async (req, res) => {
     try {
       if (!req.userId) {

@@ -7,6 +7,7 @@ import passport from 'passport';
 
 const router = express.Router();
 
+router.get('/status', walkController.walkStatus);
 router.post('/start', walkController.startWalk);
 router.post('/end', walkController.endWalk);
 router.get('/statistics', walkController.getStatistics);
