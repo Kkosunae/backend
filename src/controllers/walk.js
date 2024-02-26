@@ -82,14 +82,12 @@ const walkController = {
       const userId = req.userId;
       const totalStatistics = await walkService.getTotalStatistics(userId);
       const recentWalk = await walkService.getRecentWalk(userId);
-      const dailyStatistics = await walkService.getDailyStatistics(userId);
       const weeklyStatistics = await walkService.getWeeklyStatistics(userId);
       const monthlyStatistics = await walkService.getMonthlyStatistics(userId);
 
       return res.status(200).json({
         total: totalStatistics,
         recent: recentWalk,
-        daily: dailyStatistics,
         weekly: weeklyStatistics,
         monthly: monthlyStatistics,
       });
