@@ -34,8 +34,13 @@ const walkController = {
       const {latitude, longitude} = req.body;
       const isUserWalking = await walkService.isUserWalking(userId);
       if (isUserWalking) {
-        return res.status(400).json({error: '이미 산책 중입니다.'});
+        return res.status(400).json({error: '이미 산책 중입니다.', walkId: isUserWalking.id});
       }
+
+      if (!latitude || !longitude) {
+        return res.status(400).json({error: '필수 정보가 누락되었습니다.'});
+      }
+
       const walk = await walkService.startWalk(userId, latitude, longitude);
       return res.status(200).json({
         message: '산책을 시작했습니다.',
@@ -53,19 +58,25 @@ const walkController = {
       }
 
       const userId = req.userId;
-      const {walkId, latitude, longitude} = req.body;
+      const {walkId, latitude, longitude, distance} = req.body;
 
       const isValidWalk = await walkService.isValidWalk(userId, walkId);
       if (!isValidWalk) {
         return res.status(400).json({error: '진행중인 산책이 아닙니다.'});
       }
-      const walk = await walkService.endWalk(userId, walkId, latitude, longitude);
+
+      if (!latitude || !longitude || !distance) {
+        return res.status(400).json({error: '필수 정보가 누락되었습니다.'});
+      }
+
+      const walk = await walkService.endWalk(userId, walkId, latitude, longitude, distance);
 
       return res.status(200).json({
         message: '산책을 종료했습니다.',
         walkId: walk.id,
         startTime: walk.startTime,
         endTime: walk.endTime,
+        distance: walk.distance,
         duration: walk.duration,
       });
     } catch (error) {

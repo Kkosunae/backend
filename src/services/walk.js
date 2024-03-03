@@ -15,6 +15,53 @@ const calculateDuration = (startTime, endTime) => {
   return durationInSeconds;
 };
 
+const getCommonStatistics = async (whereCondition) => {
+  try {
+    const statistics = await Walk.findAll({
+      attributes: [
+        [sequelize.fn('COUNT', sequelize.col('id')), 'walkCount'],
+        [
+          sequelize.fn('AVG', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
+          'averageDuration',
+        ],
+        [
+          sequelize.fn('SUM', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
+          'totalDuration',
+        ],
+        [
+          sequelize.fn('MAX', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
+          'maxDuration',
+        ],
+        [
+          sequelize.fn('AVG', sequelize.col('distance')),
+          'averageDistance',
+        ],
+        [
+          sequelize.fn('SUM', sequelize.col('distance')),
+          'totalDistance',
+        ],
+        [
+          sequelize.fn('MAX', sequelize.col('distance')),
+          'maxDistance',
+        ],
+      ],
+      where: {
+        endTime: {
+          [sequelize.Op.not]: null,
+        },
+        isWalking: false,
+        ...whereCondition, // whereCondition 추가
+      },
+      raw: true,
+    });
+
+    return statistics[0]; // 반환 결과가 배열이므로 첫 번째 요소를 선택
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error getting statistics');
+  }
+};
+
 export const walkService = {
   isUserWalking: async (userId) => {
     try {
@@ -51,7 +98,7 @@ export const walkService = {
       throw new Error('Error starting walk');
     }
   },
-  endWalk: async (userId, walkId, latitude, longitude) => {
+  endWalk: async (userId, walkId, latitude, longitude, distance) => {
     try {
       const walk = await Walk.findOne(
           {where: {id: walkId, user_id: userId, isWalking: true}},
@@ -65,6 +112,7 @@ export const walkService = {
       walk.isWalking = false;
       walk.endLatitude = latitude;
       walk.endLongitude = longitude;
+      walk.distance = distance;
       await walk.save();
 
       walk.duration = calculateDuration(walk.startTime, walk.endTime);
@@ -75,110 +123,28 @@ export const walkService = {
     }
   },
   getTotalStatistics: async () => {
-    try {
-      const statistics = await Walk.findAll({
-        attributes: [
-          [sequelize.fn('COUNT', sequelize.col('id')), 'walkCount'],
-          [
-            sequelize.fn('AVG', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
-            'averageDuration',
-          ],
-          [
-            sequelize.fn('SUM', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
-            'totalDuration',
-          ],
-          [
-            sequelize.fn('MAX', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
-            'maxDuration',
-          ],
-        ],
-        where: {
-          endTime: {
-            [sequelize.Op.not]: null,
-          },
-          isWalking: false,
-        },
-        raw: true,
-      });
-
-      return statistics[0]; // 반환 결과가 배열이므로 첫 번째 요소를 선택
-    } catch (error) {
-      console.error(error);
-      throw new Error('Error getting total statistics');
-    }
+    const statistics = await getCommonStatistics({});
+    return statistics;
   },
-  // getTotalStatistics 형식으로 조회하는 최근 한달 통계
   getMonthlyStatistics: async () => {
-    try {
-      const statistics = await Walk.findAll({
-        attributes: [
-          [sequelize.fn('COUNT', sequelize.col('id')), 'walkCount'],
-          [
-            sequelize.fn('AVG', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
-            'averageDuration',
-          ],
-          [
-            sequelize.fn('SUM', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
-            'totalDuration',
-          ],
-          [
-            sequelize.fn('MAX', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
-            'maxDuration',
-          ],
-        ],
-        where: {
-          endTime: {
-            [sequelize.Op.not]: null,
-          },
-          isWalking: false,
-          startTime: {
-            [Op.gte]: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-          },
-        },
-        raw: true,
-      });
-
-      return statistics[0]; // 반환 결과가 배열이므로 첫 번째 요소를 선택
-    } catch (error) {
-      console.error(error);
-      throw new Error('Error getting monthly statistics');
-    }
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 1);
+    const statistics = await getCommonStatistics({
+      startTime: {
+        [Op.gte]: startDate,
+      },
+    });
+    return statistics;
   },
   getWeeklyStatistics: async () => {
-    try {
-      const statistics = await Walk.findAll({
-        attributes: [
-          [sequelize.fn('COUNT', sequelize.col('id')), 'walkCount'],
-          [
-            sequelize.fn('AVG', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
-            'averageDuration',
-          ],
-          [
-            sequelize.fn('SUM', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
-            'totalDuration',
-          ],
-          [
-            sequelize.fn('MAX', sequelize.fn('EXTRACT', sequelize.literal('EPOCH FROM ("Walk"."endTime" - "Walk"."startTime")'))),
-            'maxDuration',
-          ],
-        ],
-        where: {
-          endTime: {
-            [sequelize.Op.not]: null,
-          },
-          isWalking: false,
-          startTime: {
-            [Op.gte]: new Date(new Date().setDate(new Date().getDate() - 7)),
-          },
-        },
-        raw: true,
-      });
-
-      return statistics[0]; // 반환 결과가 배열이므로 첫 번째 요소를 선택
-    } catch (error) {
-      console.error(error);
-      throw new Error('Error getting weekly statistics');
-    }
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 7);
+    const statistics = await getCommonStatistics({
+      startTime: {
+        [Op.gte]: startDate,
+      },
+    });
+    return statistics;
   },
   getRecentWalk: async () => {
     try {

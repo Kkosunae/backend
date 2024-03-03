@@ -41,6 +41,10 @@ Walk.init(
         type: DataTypes.FLOAT, // 소숫점 6자리까지
         allowNull: true,
       },
+      distance: {
+        type: DataTypes.FLOAT, // 미터 기준
+        allowNull: true,
+      },
     },
     {
       sequelize,
