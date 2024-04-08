@@ -1,46 +1,54 @@
 'use strict';
 
-import {DataTypes, Model} from 'sequelize';
-import {sequelize} from '../../loaders/sequelize.js';
-import {models} from './index.js';
-import User from './user.js';
+import Sequelize from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
-class SocialLogin extends Model {}
+export default class SocialLogin extends Sequelize.Model {
+  static init(sequelize) {
+    return super.init(
+      {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        social_id: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+          defaultValue: DataTypes.NOW,
+        },
+        type: {
+          type: DataTypes.ENUM("KAKAO", "GOOGLE", "APPLE"),
+          allowNull: false,
+        },
+        name: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        email: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+      },
+      {
+        sequelize,
+        timestamps: true,
+        modelName: "SocialLogin",
+        tableName: "social_login",
+        charset: "utf8",
+        collate: "utf8_general_ci",
+      }
+    );
+  }
 
-SocialLogin.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      social_id: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-      },
-      type: {
-        type: DataTypes.ENUM('KAKAO', 'GOOGLE', 'APPLE'),
-        allowNull: false,
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-    },
-    {
-      sequelize,
-      modelName: 'SocialLogin',
-      tableName: 'social_login',
-    },
-);
-
-export default SocialLogin;
+  static associations(db) {
+    db.SocialLogin.belongsTo(db.User, {
+      foreignKey: "user_id",
+      as: "user",
+    });
+  }
+}

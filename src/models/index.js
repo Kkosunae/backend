@@ -1,20 +1,22 @@
 'use strict';
 
-import User from './user.js';
-import SocialLogin from './socialLogin.js';
-import Follow from './follow.js';
-import FollowHistory from './followHistory.js';
-import Footprint from './footprint.js';
-import FootprintImage from './footprintImage.js';
-import FootprintComment from './footprintComment.js';
+import { sequelize } from "../../loaders/sequelize.js";
 
-import Map from './map.js';
-import MapComplain from './mapComplain.js';
-import MapReportNew from './mapReportNew.js';
-import Walk from './walk.js';
-import Community from './community.js';
-import CommunityImage from './communityImage.js';
-import CommunityComment from './communityComment.js';
+import User from "./user.js";
+import SocialLogin from "./socialLogin.js";
+import Follow from "./follow.js";
+import FollowHistory from "./followHistory.js";
+import Footprint from "./footprint.js";
+import FootprintImage from "./footprintImage.js";
+import FootprintComment from "./footprintComment.js";
+
+import Map from "./map.js";
+import MapComplain from "./mapComplain.js";
+import MapReportNew from "./mapReportNew.js";
+import Walk from "./walk.js";
+import Community from "./community.js";
+import CommunityImage from "./communityImage.js";
+import CommunityComment from "./communityComment.js";
 
 const models = {
   User,
@@ -32,6 +34,11 @@ const models = {
   CommunityImage,
   CommunityComment,
 };
+
+Object.values(models).forEach((model) => model.init(sequelize));
+Object.values(models)
+  .filter((model) => typeof model.associate === "function")
+  .forEach((model) => model.associate(models));
 
 SocialLogin.belongsTo(User, {foreignKey: 'user_id', as: 'user'});
 User.hasOne(SocialLogin, {foreignKey: 'user_id', as: 'socialLogin'});
