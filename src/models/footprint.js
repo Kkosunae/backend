@@ -41,7 +41,7 @@ export default class Footprint extends Sequelize.Model {
     );
   }
 
-  static associations(db) {
+  static associate(db) {
     db.Footprint.belongsTo(db.User, {
       foreignKey: "user_id",
       as: "user",

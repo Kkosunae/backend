@@ -3,37 +3,38 @@
 import Sequelize from 'sequelize';
 import config from 'config';
 
-import User from "../src/models/user.js";
-import SocialLogin from "../src/models/socialLogin.js";
-import Follow from "../src/models/follow.js";
-import FollowHistory from "../src/models/followHistory.js";
-import Footprint from "../src/models/footprint.js";
-import FootprintImage from "../src/models/footprintImage.js";
-import FootprintComment from "../src/models/footprintComment.js";
+import User from '../src/models/user.js';
+import SocialLogin from '../src/models/socialLogin.js';
+import Follow from '../src/models/follow.js';
+import FollowHistory from '../src/models/followHistory.js';
+import Footprint from '../src/models/footprint.js';
+import FootprintImage from '../src/models/footprintImage.js';
+import FootprintComment from '../src/models/footprintComment.js';
 
-import Map from "../src/models/map.js";
-import MapComplain from "../src/models/mapComplain.js";
-import MapReportNew from "../src/models/mapReportNew.js";
-import Walk from "../src/models/walk.js";
-import Community from "../src/models/community.js";
-import CommunityImage from "../src/models/communityImage.js";
-import CommunityComment from "../src/models/communityComment.js";
+import Map from '../src/models/map.js';
+import MapComplain from '../src/models/mapComplain.js';
+import MapReportNew from '../src/models/mapReportNew.js';
+import Walk from '../src/models/walk.js';
+import Community from '../src/models/community.js';
+import CommunityImage from '../src/models/communityImage.js';
+import CommunityComment from '../src/models/communityComment.js';
 
 const sequelize = new Sequelize(
-  config.get("postgres.database"),
-  config.get("postgres.username"),
-  config.get("postgres.password"),
-  {
-    host: config.get("postgres.host"),
-    dialect: config.get("postgres.dialect"),
-    timezone: config.get("postgres.timezone"), // 예시: 대한민국 시간대에 맞는 옵션 설정
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
+    config.get('postgres.database'),
+    config.get('postgres.username'),
+    config.get('postgres.password'),
+    {
+      host: config.get('postgres.host'),
+      dialect: config.get('postgres.dialect'),
+      dialectOptions: {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+        timezone: 'Asia/Seoul',
       },
+      timezone: 'Asia/Seoul',
     },
-  }
 );
 
 const db = {};

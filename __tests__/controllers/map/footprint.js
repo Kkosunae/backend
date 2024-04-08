@@ -94,6 +94,7 @@ const footprintController = {
       }
 
       const userIdOfPost = await footprintService.getUserId(footprintId);
+      console.log(userIdOfPost, userId);
 
       if (userIdOfPost !== userId) {
         return res.status(403).json({error: '권한이 없습니다.'});
@@ -152,6 +153,7 @@ const footprintController = {
     try {
       const userId = req.userId;
       const {footprintId, commentId} = req.params;
+      console.log(footprintId, commentId);
 
       // 유효한 댓글인지 확인
       const comment = await footprintService.isValidComment(commentId);

@@ -1,7 +1,7 @@
 import app from './loaders/express.js';
 // import db from './loaders/sequelize.js';
 import router from './src/routes/index.js';
-import {config, yaml, swaggerUI, sequelize} from './loaders/module.js';
+import {config, yaml, swaggerUI, db} from './loaders/module.js';
 import authMiddleware from './middlewares/authMiddleware.js';
 import express from 'express';
 
@@ -16,11 +16,11 @@ app.listen(config.get('server.port'));
 (async () => {
   try {
     // 데이터베이스와 연결
-    await sequelize.authenticate();
+    await db.sequelize.authenticate();
     console.log('Database connection has been established successfully.');
 
     // 모델과 데이터베이스 동기화 (모델의 테이블을 생성)
-    await sequelize.sync();
+    await db.sequelize.sync();
 
     console.log('Models have been synchronized to the database.');
   } catch (error) {

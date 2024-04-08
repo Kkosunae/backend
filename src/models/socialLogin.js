@@ -45,7 +45,7 @@ export default class SocialLogin extends Sequelize.Model {
     );
   }
 
-  static associations(db) {
+  static associate(db) {
     db.SocialLogin.belongsTo(db.User, {
       foreignKey: "user_id",
       as: "user",

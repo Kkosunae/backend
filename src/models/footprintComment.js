@@ -33,7 +33,7 @@ export default class FootprintComment extends Sequelize.Model {
     );
   }
 
-  static associations(db) {
+  static associate(db) {
     db.FootprintComment.belongsTo(db.Footprint, {
       foreignKey: "footprint_id",
       as: "footprint",

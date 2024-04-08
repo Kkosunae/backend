@@ -24,7 +24,7 @@ export default class Follow extends Sequelize.Model {
     );
   }
 
-  static associations(db) {
+  static associate(db) {
     db.Follow.belongsTo(db.User, {
       foreignKey: "follower_id",
       as: "follower",

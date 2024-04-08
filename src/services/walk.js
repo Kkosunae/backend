@@ -1,5 +1,7 @@
 import {models} from '../models/index.js';
 import {Op} from 'sequelize';
+// import {sequelize} from '../../loaders/sequelize.js';
+
 import sequelize from 'sequelize';
 
 const {Walk} = models;
@@ -65,9 +67,17 @@ const getCommonStatistics = async (whereCondition) => {
 export const walkService = {
   isUserWalking: async (userId) => {
     try {
+      // Sequelize 모델에서 데이터를 가져옴
       const walk = await Walk.findOne(
           {where: {user_id: userId, isWalking: true}},
       );
+
+      // 가져온 데이터가 없는 경우 처리
+      if (!walk) {
+        return false;
+      }
+
+      // 가져온 데이터를 그대로 반환
       return walk;
     } catch (error) {
       return false;
