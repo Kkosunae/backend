@@ -6,13 +6,10 @@
 <img style="width:600px" src="https://github.com/Kkosunae/backend/assets/48286887/da3ab729-1ee0-4b1d-9521-4f755cf3123c">
 
 ## BE
-Node, ProgreSQL, GIthub Action, Docker
+Node, ProgreSQL, GIthub Action, Docker, AWS EC2, RDS, S3
 
 ## Crawling
 Python, Beautifulsoup
-<img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=for-the-badge&logo=Github Actions&logoColor=white">
-
-[Node](https://github.com/nodejs/node) 를 활용한 kkosunae backend repository입니다.
 
 ## Features
     1. JWT를 활용한 로그인, 회원가입
@@ -28,6 +25,21 @@ Python, Beautifulsoup
 - 문서 : 노션
 - Task 관리 : Jira
 - 회의 :Discord
+
+## Convention
+
+### DB 컨벤션
+    - 테이블, 컬럼 모두 snake
+    - 숫자, 약어 사용하지 않기
+    - 외래키는 뒤에 _id
+    - 참고 : https://blex.me/@Su-per/mysql-네이밍-컨벤션-정리
+    
+### 브랜치 컨벤션
+<img width="500px" alt="스크린샷 2023-06-05 오후 9 04 44" src="https://github.com/Kkosunae/backend/assets/48286887/824a26b7-315d-418f-bc0d-02062811748f">
+
+### 커밋 컨벤션
+<img width="500px" alt="스크린샷 2023-06-05 오후 9 39 40" src="https://github.com/Kkosunae/backend/assets/48286887/ef34ad52-15ee-4293-87c3-babdd7e76456">
+
 
 ## Installation
 
